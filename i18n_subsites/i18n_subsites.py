@@ -3,10 +3,10 @@
 
 
 import os
+from itertools import chain
 
 from pelican import signals, Pelican
 from pelican.settings import read_settings
-from pelican.contents import Article, Page
 
 
 
@@ -43,12 +43,13 @@ def create_lang_subsites(pelican_obj):
         settings['SITEURL'] = settings['SITEURL'] + '/' + lang
         settings['OUTPUT_PATH'] = os.path.join(settings['OUTPUT_PATH'], lang, '')
         settings['DEFAULT_LANG'] = lang   #to change what is perceived as translations
+        settings['DELETE_OUTPUT_DIRECTORY'] = False
         pelican_obj = Pelican(settings)
         pelican_obj.run()
 
 
 
-def move_translations(content_type, content_object):
+def move_translations(content_object):
     """This function points translations links to the sub-sites
 
     by prepending their location with the language code
@@ -66,16 +67,19 @@ def remove_generator_translations(generator, *args):
     """Empty the (hidden_)translation attribute of article and pages generators
 
     to prevent generating the translations as they will be generated in the lang sub-site
+    also point the translations links to the sub-sites
     """
     generator.translations = []
-    if hasattr(generator, "hidden_translations"):   #must be a post
+    if hasattr(generator, "hidden_translations"):     # must be a page
         generator.hidden_translations = []
-        
+        for page in chain(generator.pages, generator.hidden_pages):
+            move_translations(page)
+    else:                                 # is an article
+        for article in generator.articles:
+            move_translations(article)
 
         
 def register():
     signals.finalized.connect(create_lang_subsites)
-    signals.content_object_init.connect(move_translations, sender=Article)
-    signals.content_object_init.connect(move_translations, sender=Page)
     signals.article_generator_finalized.connect(remove_generator_translations)
     signals.page_generator_finalized.connect(remove_generator_translations)
