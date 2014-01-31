@@ -35,7 +35,15 @@ def create_lang_copies(pelican):
 
 
 def record_translations(content_object):
-    global _translations
+    """This function stores translations for content
+
+    Translations are first removed from generation pipeline,
+    their links are fixed to point to lang site copies
+    and later added back to generate translations links
+    """
+    global _translations, _main_site_generated
+    if _main_site_generated:
+        return
     _translations[content_object] = content_object.translations
     #content_object.translations = [] #TODO need to set them again somewhere to put them into templates and create translation links
 
