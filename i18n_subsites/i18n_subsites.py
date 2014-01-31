@@ -57,7 +57,7 @@ def create_lang_subsites(pelican_obj):
         settings = orig_settings.copy()
         settings.update(overrides)
         settings['PATH'] = orig_settings['PATH']   #it got reinitialized
-        settings['SITEURL'] = settings['SITEURL'] + '/' + lang
+        settings['SITEURL'] = _main_site_root + '/' + lang
         settings['OUTPUT_PATH'] = os.path.join(settings['OUTPUT_PATH'], lang, '')
         settings['DEFAULT_LANG'] = lang   #to change what is perceived as translations
         settings['DELETE_OUTPUT_DIRECTORY'] = False
@@ -78,8 +78,7 @@ def move_translations_links(content_object):
             lang_prepend = '../'
         else:
             lang_prepend = translation.lang + '/'
-        prepend = _main_site_root + '/' + lang_prepend if _main_site_root != '' else lang_prepend
-        translation.override_url =  prepend + translation.url
+        translation.override_url =  lang_prepend + translation.url
 
 
 
