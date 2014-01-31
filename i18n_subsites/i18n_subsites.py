@@ -8,10 +8,7 @@ from itertools import chain
 
 from pelican import signals, Pelican
 from pelican.settings import read_settings
-
-
-
-HIDE_UNTRANSLATED_POSTS = False #TODO: just loop through articles/posts, remove those withotu translations
+from pelican.contents import Page, Article
 
 
 # Global vars
@@ -66,6 +63,27 @@ def create_lang_subsites(pelican_obj):
 
 
 
+def hide_untranslated_content(generator, *args):
+    """Hide content without translation for current DEFAULT_LANG
+
+    if HIDE_UNTRANSLATED_CONTENT is True
+    """
+    if not generator.settings.get('HIDE_UNTRANSLATED_CONTENT', True):
+        return
+    contents = generator.pages if hasattr(generator, 'pages') else generator.articles
+    print(contents)
+    default_lang = generator.settings['DEFAULT_LANG']
+    for content_object in contents:
+        print(content_object.lang, default_lang)
+        if content_object.lang != default_lang:
+            if isinstance(content_object, Page):
+                content_object.status = 'hidden'
+            elif isinstance(content_object, Article):
+                content_object.status = 'draft'        
+            contents.remove(content_object)
+
+
+            
 def move_translations_links(content_object):
     """This function points translations links to the sub-sites
 
@@ -82,25 +100,27 @@ def move_translations_links(content_object):
 
 
 
-def remove_generator_translations(generator, *args):
+def update_generator_translations(generator, *args):
     """Empty the (hidden_)translation attribute of article and pages generators
 
     to prevent generating the translations as they will be generated in the lang sub-site
     also point the translations links to the sub-sites
     """
     generator.translations = []
-    if hasattr(generator, "hidden_translations"):     # must be a page
+    if hasattr(generator, "hidden_translations"): # must be a page generator
         generator.hidden_translations = []
         for page in chain(generator.pages, generator.hidden_pages):
             move_translations_links(page)
-    else:                                 # is an article
-        for article in generator.articles:
+    else:                                    # is an article generator
+        for article in chain(generator.articles, generator.drafts):
             move_translations_links(article)
 
 
-            
+
 def register():
     signals.initialized.connect(disable_lang_vars)
     signals.finalized.connect(create_lang_subsites)
-    signals.article_generator_finalized.connect(remove_generator_translations)
-    signals.page_generator_finalized.connect(remove_generator_translations)
+    signals.article_generator_finalized.connect(hide_untranslated_content)
+    signals.page_generator_finalized.connect(hide_untranslated_content)
+    signals.article_generator_finalized.connect(update_generator_translations)
+    signals.page_generator_finalized.connect(update_generator_translations)
