@@ -45,3 +45,7 @@ Future plans
 - Find a better way of loading the config overrides that doesn't reinitialize so many vars.
 - Instead of specifying a different theme for each language, the ``jinja2.ext.i18n`` extension could be used. 
   This would require some gettext and babel infrastructure.
+
+Development
+-----------
+Please file issues, pull requests at https://github.com/smartass101/pelican-plugins
