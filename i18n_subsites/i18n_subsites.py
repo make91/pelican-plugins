@@ -7,6 +7,7 @@ import os
 
 from pelican import signals, Pelican
 from pelican.settings import read_settings
+from pelican.contents import Article, Page
 
 
 
@@ -47,7 +48,7 @@ def create_lang_subsites(pelican_obj):
 
 
 
-def move_translations(content_object):
+def move_translations(content_type, content_object):
     """This function points translations links to the sub-sites
 
     by prepending their location with the language code
@@ -74,6 +75,7 @@ def remove_generator_translations(generator, *args):
         
 def register():
     signals.finalized.connect(create_lang_subsites)
-    signals.content_object_init.connect(move_translations)
+    signals.content_object_init.connect(move_translations, sender=Article)
+    signals.content_object_init.connect(move_translations, sender=Page)
     signals.article_generator_finalized.connect(remove_generator_translations)
     signals.page_generator_finalized.connect(remove_generator_translations)
