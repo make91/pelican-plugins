@@ -41,6 +41,7 @@ def create_lang_subsites(pelican_obj):
         settings.update(overrides)
         settings['SITEURL'] = settings['SITEURL'] + '/' + lang
         settings['OUTPUT_PATH'] = os.path.join(settings['OUTPUT_PATH'], lang, '')
+        settings['DEFAULT_LANG'] = lang   #to change what is perceived as translations
         pelican_obj = Pelican(settings)
         pelican_obj.run()
 
