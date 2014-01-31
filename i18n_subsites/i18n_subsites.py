@@ -19,6 +19,20 @@ _main_site_root = ""
 _main_site_lang = "en"
 
 
+
+def disable_lang_vars(pelican_obj):
+    """Set lang specific url and save_as vars to the non-lang defaults
+
+    e.g. ARTICLE_LANG_URL = ARTICLE_URL
+    They would conflict with this plugin otherwise
+    """
+    s = pelican_obj.settings
+    for content in ['ARTICLE', 'PAGE']:
+        for meta in ['_URL', '_SAVE_AS']:
+            s[content + '_LANG' + meta] = s[content + meta]
+
+
+
 def create_lang_subsites(pelican_obj):
     """For each language create a subsite using the lang-specific config
 
@@ -78,8 +92,10 @@ def remove_generator_translations(generator, *args):
         for article in generator.articles:
             move_translations(article)
 
-        
+
+            
 def register():
+    signals.initialized.connect(disable_lang_vars)
     signals.finalized.connect(create_lang_subsites)
     signals.article_generator_finalized.connect(remove_generator_translations)
     signals.page_generator_finalized.connect(remove_generator_translations)
