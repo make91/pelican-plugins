@@ -5,7 +5,7 @@
 import six
 
 from pelican import signals, Pelican
-import pelican.settings
+from pelican.settings import read_settings
 
 
 
@@ -17,23 +17,20 @@ _main_site_generated = False
 
 
 
-def create_lang_copies(pelican):
+def create_lang_copies(pelican_obj):
     global _main_site_generated
     if _main_site_generated:
         return
     else:
         _main_site_generated = True
-    for lang, config in I18N_CONFIGS.items():
-        if not isinstance(config, six.types.ModuleType):
-            try:
-                config = __import__(config)
-            except ImportError:
-                print("Cannot import config '{}' for lang '{}', skipping".format(str(config), lang))
-                continue
-        # TODO put the module in place of pelicanconf
-        settings = pelican.settings.get_settings_from_module(config)
-        pelican = Pelican(settings)
-        pelican.run()
+    for lang, config_path in pelican_obj.settings.get('I18N_CONF_OVERRIDES', {}).items():
+        try:
+            settings = read_settings(config_path)
+        except Exception:
+            print("Cannot read config '{}' for lang '{}', skipping.".format(config_path, lang))
+            continue
+        pelican_obj = Pelican(settings)
+        pelican_obj.run()
 
 
 
@@ -42,7 +39,7 @@ def move_translations(content_object):
 
     by prepending their location with the language code
     """
-    if _main_site_generated:
+    if _main_site_generated: #TODO needed? maybe we shoudl change utl every time
         return
     for translation in content_object.translations:
         if translation.in_default_lang:   # cannot prepend
