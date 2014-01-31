@@ -3,6 +3,7 @@
 
 
 import six
+import os
 
 from pelican import signals, Pelican
 from pelican.settings import read_settings
@@ -24,12 +25,18 @@ def create_lang_subsites(pelican_obj):
         return
     else:
         _main_site_generated = True
+
+    orig_settings = pelican_obj.settings.copy()
     for lang, config_path in pelican_obj.settings.get('I18N_CONF_OVERRIDES', {}).items():
         try:
-            settings = read_settings(config_path)
+            overrides = read_settings(config_path)
         except Exception:
-            print("Cannot read config '{}' for lang '{}', skipping.".format(config_path, lang))
+            print("Cannot read config overrides '{}' for lang '{}', skipping.".format(config_path, lang))
             continue
+        settings = orig_settings.copy()
+        settings.update(overrides)
+        settings['SITEURL'] = settings['SITEURL'] + '/' + lang
+        settings['OUTPUT_PATH'] = os.path.join(settings['OUTPUT_PATH'], lang, '')
         pelican_obj = Pelican(settings)
         pelican_obj.run()
 
