@@ -2,7 +2,6 @@
 
 
 
-import six
 import os
 
 from pelican import signals, Pelican
