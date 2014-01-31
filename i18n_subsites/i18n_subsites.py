@@ -24,7 +24,7 @@ def create_lang_subsites(pelican_obj):
     """For each language create a subsite using the lang-specific config
 
     append language code to SITEURL and OUTPUT_PATH for each generated lang"""
-    global _main_site_generated, _main_site_generated
+    global _main_site_generated, _main_site_root
     if _main_site_generated:
         return
     else:
