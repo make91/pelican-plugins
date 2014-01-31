@@ -67,11 +67,14 @@ def move_translations(content_object):
     """This function points translations links to the sub-sites
 
     by prepending their location with the language code
+    or directs a DEFAULT_LANG translation back to top level site
     """
     for translation in content_object.translations:
-        if translation.lang == _main_site_lang:   # cannot prepend
-            continue
-        lang_prepend = translation.lang + '/'
+        if translation.lang == _main_site_lang:
+        # cannot prepend, must take to top level
+            lang_prepend = '../'
+        else:
+            lang_prepend = translation.lang + '/'
         prepend = _main_site_root + '/' + lang_prepend if _main_site_root != '' else lang_prepend
         translation.override_url =  prepend + translation.url
 
