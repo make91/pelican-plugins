@@ -2,9 +2,10 @@
 
 
 
+import six
+
 from pelican import signals, Pelican
 import pelican.settings
-import six
 
 
 
@@ -12,7 +13,6 @@ HIDE_UNTRANSLATED_POSTS = False
 
 
 # Global vars
-_translations = dict()
 _main_site_generated = False
 
 
@@ -37,18 +37,18 @@ def create_lang_copies(pelican):
 
 
 
-def record_translations(content_object):
-    """This function stores translations for content
+def move_translations(content_object):
+    """This function points translations links to the sub-sites
 
-    Translations are first removed from generation pipeline,
-    their links are fixed to point to lang site copies
-    and later added back only to generate translations links
+    by prepending their location with the language code
     """
-    global _translations, _main_site_generated
     if _main_site_generated:
         return
-    _translations[content_object] = content_object.translations
-    #content_object.translations = [] #TODO need to set them again somewhere to put them into templates and create translation links
+    for translation in content_object.translations:
+        if translation.in_default_lang:   # cannot prepend
+            continue
+        # prepend with / to go right to the root
+        translation.url = '/' + translation.lang + '/' + translation.url
 
 
 
@@ -62,8 +62,9 @@ def remove_generator_translations(generator, *args):
         generator.hidden_translations = []
         
 
+        
 def register():
     signals.finalized.connect(create_lang_copies)
-    signals.content_object_init.connect(record_translations)
+    signals.content_object_init.connect(move_translations)
     signals.article_generator_finalized.connect(remove_generator_translations)
     signals.page_generator_finalized.connect(remove_generator_translations)
