@@ -2,12 +2,13 @@ Site i18n plugin
 ================
 
 This plugin extends the translations functionality by creating i8n-ized sub-sites for the default site.
-It is somewhat redundant with the *\*_LANG_SAVE_AS* variables.
+It is therefore redundant with the *\*_LANG_{SAVE_AS,URL}* variables, so it disables them to prevent conflicts.
 
 What it does
 ------------
-1. While building the site for *DEFAULT_LANG* the translations of pages and articles are not generated, but their relations to the original content is kept.
-2. For each non-default language a "sub-site" with a specified config [#conf]_ is created [#run]_, linking the translations to the originals (if available). The language code used is appended to the *OUTPUT_PATH* and *SITE_URL* of each sub-site.
+1. The *\*_LANG_URL* and *\*_LANG_SAVE_AS* variables are set to their normal counterparts (e.g. *ARTICLE_URL*) so they don't conflict with this scheme.
+2. While building the site for *DEFAULT_LANG* the translations of pages and articles are not generated, but their relations to the original content is kept.
+3. For each non-default language a "sub-site" with a specified config [#conf]_ is created [#run]_, linking the translations to the originals (if available). The language code used is appended to the *OUTPUT_PATH* and *SITE_URL* of each sub-site.
 
 Content without a translation for a language is generated if the *HIDE_UNTRANSLATED_CONTENT* variable is False.
 
