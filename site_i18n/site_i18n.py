@@ -39,7 +39,7 @@ def record_translations(content_object):
 
     Translations are first removed from generation pipeline,
     their links are fixed to point to lang site copies
-    and later added back to generate translations links
+    and later added back only to generate translations links
     """
     global _translations, _main_site_generated
     if _main_site_generated:
@@ -49,6 +49,18 @@ def record_translations(content_object):
 
 
 
+def remove_generator_translations(generator, *args):
+    """Empty the (hidden_)translation attribute of article and pages generators
+
+    to prevent generating the translations as they will be generated in the lang sub-site
+    """
+    generator.translations = []
+    if hasattr(generator, "hidden_translations"):
+        generator.hidden_translations = []
+        
+
 def register():
     signals.finalized.connect(create_lang_copies)
     signals.content_object_init.connect(record_translations)
+    signals.article_generator_finalized.connect(remove_generator_translations)
+    signals.page_generator_finalized.connect(remove_generator_translations)
