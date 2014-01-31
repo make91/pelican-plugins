@@ -15,18 +15,20 @@ HIDE_UNTRANSLATED_POSTS = False
 
 # Global vars
 _main_site_generated = False
+_main_site_root = ""
 
 
 
 def create_lang_subsites(pelican_obj):
     """For each language create a subsite using the lang-specific config"""
-    global _main_site_generated
+    global _main_site_generated, _main_site_generated
     if _main_site_generated:
         return
     else:
         _main_site_generated = True
 
     orig_settings = pelican_obj.settings.copy()
+    _main_site_root = orig_settings['SITEURL']
     for lang, config_path in pelican_obj.settings.get('I18N_CONF_OVERRIDES', {}).items():
         try:
             overrides = read_settings(config_path)
@@ -47,13 +49,12 @@ def move_translations(content_object):
 
     by prepending their location with the language code
     """
-    if _main_site_generated: #TODO needed? maybe we shoudl change utl every time
-        return
     for translation in content_object.translations:
         if translation.in_default_lang:   # cannot prepend
             continue
-        # prepend with / to go right to the root
-        translation.url = '/' + translation.lang + '/' + translation.url
+        lang_prepend = translation.lang + '/'
+        prepend = _main_site_root + '/' + lang_prepend if _main_site_root != '' else lang_prepend
+        translation.override_url =  prepend + translation.url
 
 
 
