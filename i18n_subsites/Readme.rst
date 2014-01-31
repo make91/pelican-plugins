@@ -1,4 +1,4 @@
-i18n subsite plugin
+i18n subsites plugin
 ===================
 
 This plugin extends the translations functionality by creating i8n-ized sub-sites for the default site.
@@ -19,6 +19,8 @@ Setting it up
 -------------
 
 For each extra used language a different *pelicanconf.py* must be given (as a relative path) in the *I18N_CONF_OVERRIDES* dictionary::
+
+    PLUGINS = ['i18n_subsites', ...]
 
     # mapping: language_code -> path_to_conf_override
     I18N_CONF_OVERRIDES = {
