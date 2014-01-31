@@ -3,6 +3,7 @@
 
 
 import os
+import logging
 from itertools import chain
 
 from pelican import signals, Pelican
@@ -17,6 +18,7 @@ HIDE_UNTRANSLATED_POSTS = False #TODO: just loop through articles/posts, remove 
 _main_site_generated = False
 _main_site_root = ""
 _main_site_lang = "en"
+logger = logging.getLogger(__name__)
 
 
 
@@ -50,10 +52,11 @@ def create_lang_subsites(pelican_obj):
         try:
             overrides = read_settings(config_path)
         except Exception:
-            print("Cannot read config overrides '{}' for lang '{}', skipping.".format(config_path, lang))
+            logging.error("Cannot read config overrides '{}' for lang '{}', skipping.".format(config_path, lang))
             continue
         settings = orig_settings.copy()
         settings.update(overrides)
+        settings['PATH'] = orig_settings['PATH']   #it got reinitialized
         settings['SITEURL'] = settings['SITEURL'] + '/' + lang
         settings['OUTPUT_PATH'] = os.path.join(settings['OUTPUT_PATH'], lang, '')
         settings['DEFAULT_LANG'] = lang   #to change what is perceived as translations
@@ -63,7 +66,7 @@ def create_lang_subsites(pelican_obj):
 
 
 
-def move_translations(content_object):
+def move_translations_links(content_object):
     """This function points translations links to the sub-sites
 
     by prepending their location with the language code
@@ -90,10 +93,10 @@ def remove_generator_translations(generator, *args):
     if hasattr(generator, "hidden_translations"):     # must be a page
         generator.hidden_translations = []
         for page in chain(generator.pages, generator.hidden_pages):
-            move_translations(page)
+            move_translations_links(page)
     else:                                 # is an article
         for article in generator.articles:
-            move_translations(article)
+            move_translations_links(article)
 
 
             
