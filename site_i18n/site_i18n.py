@@ -1,4 +1,4 @@
-"""Site i18n plugin creates i18n-ized copies of the default site"""
+"""Site i18n plugin creates i18n-ized subsites of the default site"""
 
 
 
@@ -17,7 +17,8 @@ _main_site_generated = False
 
 
 
-def create_lang_copies(pelican_obj):
+def create_lang_subsites(pelican_obj):
+    """For each language create a subsite using the lang-specific config"""
     global _main_site_generated
     if _main_site_generated:
         return
@@ -61,7 +62,7 @@ def remove_generator_translations(generator, *args):
 
         
 def register():
-    signals.finalized.connect(create_lang_copies)
+    signals.finalized.connect(create_lang_subsites)
     signals.content_object_init.connect(move_translations)
     signals.article_generator_finalized.connect(remove_generator_translations)
     signals.page_generator_finalized.connect(remove_generator_translations)
