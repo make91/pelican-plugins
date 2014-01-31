@@ -16,14 +16,14 @@ HIDE_UNTRANSLATED_POSTS = False #TODO: just loop through articles/posts, remove 
 # Global vars
 _main_site_generated = False
 _main_site_root = ""
-
+_main_site_lang = "en"
 
 
 def create_lang_subsites(pelican_obj):
     """For each language create a subsite using the lang-specific config
 
     append language code to SITEURL and OUTPUT_PATH for each generated lang"""
-    global _main_site_generated, _main_site_root
+    global _main_site_generated, _main_site_root, _main_site_lang
     if _main_site_generated:
         return
     else:
@@ -31,6 +31,7 @@ def create_lang_subsites(pelican_obj):
 
     orig_settings = pelican_obj.settings.copy()
     _main_site_root = orig_settings['SITEURL']
+    _main_site_lang = orig_settings['DEFAULT_LANG']
     for lang, config_path in pelican_obj.settings.get('I18N_CONF_OVERRIDES', {}).items():
         try:
             overrides = read_settings(config_path)
@@ -53,7 +54,7 @@ def move_translations(content_type, content_object):
     by prepending their location with the language code
     """
     for translation in content_object.translations:
-        if translation.in_default_lang:   # cannot prepend
+        if translation.lang == _main_site_lang:   # cannot prepend
             continue
         lang_prepend = translation.lang + '/'
         prepend = _main_site_root + '/' + lang_prepend if _main_site_root != '' else lang_prepend
