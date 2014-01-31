@@ -3,6 +3,7 @@
 
 
 from pelican import signals, Pelican
+import pelican.settings
 import six
 
 
@@ -29,7 +30,9 @@ def create_lang_copies(pelican):
             except ImportError:
                 print("Cannot import config '{}' for lang '{}', skipping".format(str(config), lang))
                 continue
-        pelican = Pelican(config)
+        # TODO put the module in place of pelicanconf
+        settings = pelican.settings.get_settings_from_module(config)
+        pelican = Pelican(settings)
         pelican.run()
 
 
