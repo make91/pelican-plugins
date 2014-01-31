@@ -10,7 +10,7 @@ from pelican.settings import read_settings
 
 
 
-HIDE_UNTRANSLATED_POSTS = False
+HIDE_UNTRANSLATED_POSTS = False #TODO: just loop through articles/posts, remove those withotu translations
 
 
 # Global vars
@@ -66,7 +66,7 @@ def remove_generator_translations(generator, *args):
     to prevent generating the translations as they will be generated in the lang sub-site
     """
     generator.translations = []
-    if hasattr(generator, "hidden_translations"):
+    if hasattr(generator, "hidden_translations"):   #must be a post
         generator.hidden_translations = []
         
 
