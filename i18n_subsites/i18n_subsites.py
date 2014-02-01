@@ -141,10 +141,11 @@ def install_templates_translation(writer):
     domain = writer.settings.get('I18N_GETTEXT_DOMAIN', 'messages')
     localedir = writer.settings.get('I18N_GETTEXT_LOCALEDIR', 'translations')
     # TODO by default localedir = writer.theme.path + 'translations'
-    languages = [_main_site_lang] + list(writer.settings.get('I18N_SUBSITES', {}).keys())
+    languages = [writer.settings['DEFAULT_LANG']]
     translations = gettext.translation(domain, localedir, languages)
     writer.env.install_gettext_translations(translations)
-            
+    # TODO must set the DEFAULT_LANG as the one to use by gettext
+
 
 
 def register():
