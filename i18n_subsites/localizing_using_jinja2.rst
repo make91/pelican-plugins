@@ -14,23 +14,10 @@ Then follow the `jinja2 templating documentation for the i18n plugin <http://jin
 
 .. |ext| replace:: ``jinja2.ext.i18n``
 
-2. Extract translatable strings and translate them
---------------------------------------------------
+2. Specify translations location
+--------------------------------
 
 The |ext| extension uses the `Python gettext library <http://docs.python.org/library/gettext.html>`_ for translating strings.
-There are many ways to extract translatable strings and create ``gettext`` compatible translations. 
-You can create the ``*.mo`` files yourself, or you can use some helper tool as described in `the Python gettext library howto <http://docs.python.org/library/gettext.html#internationalizing-your-programs-and-modules>`_.
-
-Recommended tool: babel
-.......................
-
-`babel <http://babel.pocoo.org/>`_ makes it easy to extract translatable strings from the localized jinja2 templates
-and assists with creating translations as documented in this `jinja2-babel howto <http://pythonhosted.org/Flask-Babel/#translating-applications>`_ [#flask]_.
-
-.. [#flask] although the howto is oriented at Flask based webapps, the linked translation howto is not Flask specific
-
-3. Specify translations location
---------------------------------
 
 In your Pelican config you can give the path in which to look for translations in the *I18N_GETTEXT_LOCALEDIR* variable.
 If not given, it is assumed to be the ``translations`` subfolder in the top folder of the theme specified by *THEME*.
@@ -46,4 +33,19 @@ With the following in your pelican conf::
   I18N_GETTEXT_DOMAIN = 'my_domain'
 
 the translation for language 'cz' will be expected to be in ``some/path/cz/LC_MESSAGES/my_domain.mo``
+
+3. Extract translatable strings and translate them
+--------------------------------------------------
+
+There are many ways to extract translatable strings and create ``gettext`` compatible translations. 
+You can create the ``*.mo`` files yourself, or you can use some helper tool as described in `the Python gettext library howto <http://docs.python.org/library/gettext.html#internationalizing-your-programs-and-modules>`_.
+
+Recommended tool: babel
+.......................
+
+`babel <http://babel.pocoo.org/>`_ makes it easy to extract translatable strings from the localized jinja2 templates
+and assists with creating translations as documented in this `jinja2-babel howto <http://pythonhosted.org/Flask-Babel/#translating-applications>`_ [#flask]_.
+
+.. [#flask] although the howto is oriented at Flask based webapps, the linked translation howto is not Flask specific
+
 
