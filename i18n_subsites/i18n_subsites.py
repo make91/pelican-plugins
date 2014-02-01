@@ -10,6 +10,9 @@ from itertools import chain
 from pelican import signals, Pelican
 from pelican.contents import Page, Article
 
+from ._regenerate_context_helpers import regenerate_context_articles
+
+
 
 # Global vars
 _main_site_generated = False
@@ -116,7 +119,8 @@ def update_generator_contents(generator, *args):
                 content_object.status = 'draft'        
             contents.remove(content_object)
             hidden_contents.append(content_object)
-
+    if not is_pages_gen:           # regenerate categories, tags, etc.
+        regenerate_context_articles(generator)
 
 
 def register():
