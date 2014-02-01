@@ -58,7 +58,7 @@ def create_lang_subsites(pelican_obj):
         settings['OUTPUT_PATH'] = os.path.join(settings['OUTPUT_PATH'], lang, '')
         settings['DEFAULT_LANG'] = lang   #to change what is perceived as translations
         settings['DELETE_OUTPUT_DIRECTORY'] = False
-        pelican_obj = Pelican(settings)
+        pelican_obj = Pelican(settings)   #TODO use PELICAN_CLASS
         pelican_obj.run()
 
 
@@ -70,7 +70,9 @@ def hide_untranslated_content(generator, *args):
     """
     if not generator.settings.get('HIDE_UNTRANSLATED_CONTENT', True):
         return
-    contents = generator.pages if hasattr(generator, 'pages') else generator.articles
+    is_pages_gen = hasattr(generator, 'pages')
+    contents = generator.pages if is_pages_gen else generator.articles
+    hidden_contenets = generator.hidden_pages if is_pages_gen else generator.drafts 
     print(contents)
     default_lang = generator.settings['DEFAULT_LANG']
     for content_object in contents:
@@ -81,6 +83,7 @@ def hide_untranslated_content(generator, *args):
             elif isinstance(content_object, Article):
                 content_object.status = 'draft'        
             contents.remove(content_object)
+            hidden_contenets.append(content_object)
 
 
             
