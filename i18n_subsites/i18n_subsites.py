@@ -135,21 +135,22 @@ def update_generator_contents(generator, *args):
 
 
 
-def install_templates_translation(writer):
-    if 'jinja2.ext.i18n' not in writer.settings['JINJA_EXTENSIONS']:
+def install_templates_translations(generator):
+    if 'jinja2.ext.i18n' not in generator.settings['JINJA_EXTENSIONS']:
         return
-    domain = writer.settings.get('I18N_GETTEXT_DOMAIN', 'messages')
-    localedir = writer.settings.get('I18N_GETTEXT_LOCALEDIR', 'translations')
-    # TODO by default localedir = writer.theme.path + 'translations'
-    languages = [writer.settings['DEFAULT_LANG']]
+    domain = generator.settings.get('I18N_GETTEXT_DOMAIN', 'messages')
+    localedir = generator.settings.get('I18N_GETTEXT_LOCALEDIR', 'translations')
+    # TODO by default localedir = generator.theme.path + 'translations'
+    languages = [generator.settings['DEFAULT_LANG']]
     translations = gettext.translation(domain, localedir, languages)
-    writer.env.install_gettext_translations(translations)
+    generator.env.install_gettext_translations(translations)
     # TODO must set the DEFAULT_LANG as the one to use by gettext
 
 
 
 def register():
     signals.initialized.connect(disable_lang_vars)
+    signals.generator_init.connect(install_templates_translations)
     signals.article_generator_finalized.connect(update_generator_contents)
     signals.page_generator_finalized.connect(update_generator_contents)
     signals.finalized.connect(create_lang_subsites)
