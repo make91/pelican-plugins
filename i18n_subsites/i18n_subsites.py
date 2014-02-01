@@ -119,8 +119,16 @@ def update_generator_contents(generator, *args):
                 content_object.status = 'draft'        
             contents.remove(content_object)
             hidden_contents.append(content_object)
-    if not is_pages_gen:           # regenerate categories, tags, etc.
-        regenerate_context_articles(generator)
+    if not is_pages_gen: # regenerate categories, tags, etc. for articles
+        if hasattr(generator, '_generate_context_aggregate'):                  # if implemented 
+            # Simulate __init__ for fields that need it
+            generator.dates = {}
+            generator.tags = defaultdict(list)
+            generator.categories = defaultdict(list)
+            generator.authors = defaultdict(list)
+            generator._generate_context_aggregate()
+        else:                             # fallback for Pelican 3.3.0
+            regenerate_context_articles(generator)
 
 
 def register():

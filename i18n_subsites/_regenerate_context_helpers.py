@@ -1,11 +1,3 @@
-"""Helpers to regenerate context after modifying article draft state
-
-essentially just a copy from pelican.generators.ArticlesGenerator.generate_context
-after process_translations up to signal sending
-
-This has to be kept in sync untill a better solution is found
-"""
-
 
 import math
 import random
@@ -14,6 +6,14 @@ from operator import attrgetter, itemgetter
 
 
 def regenerate_context_articles(generator):
+    """Helper to regenerate context after modifying articles draft state
+
+    essentially just a copy from pelican.generators.ArticlesGenerator.generate_context
+    after process_translations up to signal sending
+
+    This has to be kept in sync untill a better solution is found
+    This is for Pelican version 3.3.0
+    """
     # Simulate __init__ for fields that need it
     generator.dates = {}
     generator.tags = defaultdict(list)
