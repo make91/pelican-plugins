@@ -32,7 +32,7 @@ For each extra used language code a language specific variables overrides dictio
 - The language code is the language identifier used in the *lang* metadata. It is appended to *OUTPUT_PATH* and *SITEURL* of each i18n sub-site.
 - The i18n-ized config overrides dictionary may specify configuration variable overrides, e.g. a different *LOCALE*, *SITENAME*, *TIMEZONE*, etc. 
   However, it **must not** override *OUTPUT_PATH* and *SITEURL* as they are modified automatically by appending the language subpath.
-  Most importantly, a localized [#local]_ theme can be specified in *THEME*.
+  Most importantly, a localized [#local]_ theme can be specified in *THEME*. For localizing a theme using ``jinja2.ext.i18n`` you can follow the `howto <./localizing_with_jinja2.rst`_.
 
 .. [#local] It is convenient to add language buttons to your theme in addition to the translations links.
 
@@ -41,11 +41,6 @@ Usage notes
 - It is **mandatory** to specify *lang* metadata for each article and page as *DEFAULT_LANG* is later changed for each sub-site.
 - As with the original translations functionality, *slug* metadata is used to group translations. It is therefore often
   convenient to compensate for this by overriding the content url (which defaults to slug) using the *url* and *save_as* metadata.
-
-Future plans
-------------
-- Instead of specifying a different theme for each language, the ``jinja2.ext.i18n`` extension could be used. 
-  This would require some gettext and babel infrastructure.
 
 Development
 -----------

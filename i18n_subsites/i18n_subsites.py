@@ -7,6 +7,9 @@ import six
 import logging
 from itertools import chain
 
+import gettext
+import jinja2
+
 from pelican import signals, Pelican
 from pelican.contents import Page, Article
 
@@ -57,7 +60,7 @@ def create_lang_subsites(pelican_obj):
         settings['OUTPUT_PATH'] = os.path.join(orig_settings['OUTPUT_PATH'], lang, '')
         settings['DEFAULT_LANG'] = lang   # to change what is perceived as translations
         settings['DELETE_OUTPUT_DIRECTORY'] = False # prevent deletion of previous runs
-        
+
         cls = settings['PELICAN_CLASS']
         if isinstance(cls, six.string_types):
             module, cls_name = cls.rsplit('.', 1)
@@ -105,22 +108,22 @@ def update_generator_contents(generator, *args):
     else:                                    # is an article generator
         for article in chain(generator.articles, generator.drafts):
             move_translations_links(article)
-            
+
     if not generator.settings.get('HIDE_UNTRANSLATED_CONTENT', True):
         return
     contents = generator.pages if is_pages_gen else generator.articles
-    hidden_contents = generator.hidden_pages if is_pages_gen else generator.drafts 
+    hidden_contents = generator.hidden_pages if is_pages_gen else generator.drafts
     default_lang = generator.settings['DEFAULT_LANG']
     for content_object in contents:
         if content_object.lang != default_lang:
             if isinstance(content_object, Page):
                 content_object.status = 'hidden'
             elif isinstance(content_object, Article):
-                content_object.status = 'draft'        
+                content_object.status = 'draft'
             contents.remove(content_object)
             hidden_contents.append(content_object)
     if not is_pages_gen: # regenerate categories, tags, etc. for articles
-        if hasattr(generator, '_generate_context_aggregate'):                  # if implemented 
+        if hasattr(generator, '_generate_context_aggregate'):                  # if implemented
             # Simulate __init__ for fields that need it
             generator.dates = {}
             generator.tags = defaultdict(list)
@@ -129,6 +132,19 @@ def update_generator_contents(generator, *args):
             generator._generate_context_aggregate()
         else:                             # fallback for Pelican 3.3.0
             regenerate_context_articles(generator)
+
+
+
+def install_templates_translation(writer):
+    if 'jinja2.ext.i18n' not in writer.settings['JINJA_EXTENSIONS']:
+        return
+    domain = writer.settings.get('I18N_GETTEXT_DOMAIN', 'messages')
+    localedir = writer.settings.get('I18N_GETTEXT_LOCALEDIR', 'translations')
+    # TODO by default localedir = writer.theme.path + 'translations'
+    languages = [_main_site_lang] + list(writer.settings.get('I18N_SUBSITES', {}).keys())
+    translations = gettext.translation(domain, localedir, languages)
+    writer.env.install_gettext_translations(translations)
+            
 
 
 def register():
