@@ -69,30 +69,6 @@ def create_lang_subsites(pelican_obj):
 
 
 
-def hide_untranslated_content(generator, *args):
-    """Hide content without translation for current DEFAULT_LANG
-
-    if HIDE_UNTRANSLATED_CONTENT is True
-    """
-    if not generator.settings.get('HIDE_UNTRANSLATED_CONTENT', True):
-        return
-    is_pages_gen = hasattr(generator, 'pages')
-    contents = generator.pages if is_pages_gen else generator.articles
-    hidden_contents = generator.hidden_pages if is_pages_gen else generator.drafts 
-    print(contents)
-    default_lang = generator.settings['DEFAULT_LANG']
-    for content_object in contents:
-        print(content_object.lang, default_lang)
-        if content_object.lang != default_lang:
-            if isinstance(content_object, Page):
-                content_object.status = 'hidden'
-            elif isinstance(content_object, Article):
-                content_object.status = 'draft'        
-            contents.remove(content_object)
-            hidden_contents.append(content_object)
-
-
-            
 def move_translations_links(content_object):
     """This function points translations links to the sub-sites
 
@@ -109,27 +85,44 @@ def move_translations_links(content_object):
 
 
 
-def update_generator_translations(generator, *args):
-    """Empty the (hidden_)translation attribute of article and pages generators
+def update_generator_contents(generator, *args):
+    """Update the contents lists of a generator
 
+    Empty the (hidden_)translation attribute of article and pages generators
     to prevent generating the translations as they will be generated in the lang sub-site
-    also point the translations links to the sub-sites
+    and point the content translations links to the sub-sites
+
+    Hide content without a translation for current DEFAULT_LANG
+    if HIDE_UNTRANSLATED_CONTENT is True
     """
     generator.translations = []
-    if hasattr(generator, "hidden_translations"): # must be a page generator
+    is_pages_gen = hasattr(generator, 'pages')
+    if is_pages_gen:
         generator.hidden_translations = []
         for page in chain(generator.pages, generator.hidden_pages):
             move_translations_links(page)
     else:                                    # is an article generator
         for article in chain(generator.articles, generator.drafts):
             move_translations_links(article)
+            
+    if not generator.settings.get('HIDE_UNTRANSLATED_CONTENT', True):
+        return
+    contents = generator.pages if is_pages_gen else generator.articles
+    hidden_contents = generator.hidden_pages if is_pages_gen else generator.drafts 
+    default_lang = generator.settings['DEFAULT_LANG']
+    for content_object in contents:
+        if content_object.lang != default_lang:
+            if isinstance(content_object, Page):
+                content_object.status = 'hidden'
+            elif isinstance(content_object, Article):
+                content_object.status = 'draft'        
+            contents.remove(content_object)
+            hidden_contents.append(content_object)
 
 
 
 def register():
     signals.initialized.connect(disable_lang_vars)
+    signals.article_generator_finalized.connect(update_generator_contents)
+    signals.page_generator_finalized.connect(update_generator_contents)
     signals.finalized.connect(create_lang_subsites)
-    signals.article_generator_finalized.connect(hide_untranslated_content)
-    signals.page_generator_finalized.connect(hide_untranslated_content)
-    signals.article_generator_finalized.connect(update_generator_translations)
-    signals.page_generator_finalized.connect(update_generator_translations)
