@@ -139,8 +139,9 @@ def install_templates_translations(generator):
     if 'jinja2.ext.i18n' not in generator.settings['JINJA_EXTENSIONS']:
         return
     domain = generator.settings.get('I18N_GETTEXT_DOMAIN', 'messages')
-    localedir = generator.settings.get('I18N_GETTEXT_LOCALEDIR', 'translations')
-    # TODO by default localedir = generator.theme.path + 'translations'
+    localedir = generator.settings.get('I18N_GETTEXT_LOCALEDIR')
+    if localedir is None:
+        localedir = os.path.join(generator.theme, 'translations/')
     languages = [generator.settings['DEFAULT_LANG']]
     translations = gettext.translation(domain, localedir, languages)
     generator.env.install_gettext_translations(translations)
