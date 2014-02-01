@@ -13,7 +13,6 @@ from pelican.contents import Page, Article
 
 # Global vars
 _main_site_generated = False
-_main_site_root = ""
 _main_site_lang = "en"
 logger = logging.getLogger(__name__)
 
@@ -40,20 +39,19 @@ def create_lang_subsites(pelican_obj):
     and set DELETE_OUTPUT_DIRECTORY to False to prevent deleting output from previous runs
     Then generate the subsite using a PELICAN_CLASS instance and its run method.
     """
-    global _main_site_generated, _main_site_root, _main_site_lang
-    if _main_site_generated:
+    global _main_site_generated, _main_site_lang
+    if _main_site_generated:      # make sure this is only called once
         return
     else:
         _main_site_generated = True
 
     orig_settings = pelican_obj.settings
-    _main_site_root = orig_settings['SITEURL']
     _main_site_lang = orig_settings['DEFAULT_LANG']
     for lang, overrides in orig_settings.get('I18N_SUBSITES', {}).items():
         settings = orig_settings.copy()
         settings.update(overrides)
-        settings['SITEURL'] = _main_site_root + '/' + lang
-        settings['OUTPUT_PATH'] = os.path.join(settings['OUTPUT_PATH'], lang, '')
+        settings['SITEURL'] = orig_settings['SITEURL'] + '/' + lang
+        settings['OUTPUT_PATH'] = os.path.join(orig_settings['OUTPUT_PATH'], lang, '')
         settings['DEFAULT_LANG'] = lang   # to change what is perceived as translations
         settings['DELETE_OUTPUT_DIRECTORY'] = False # prevent deletion of previous runs
         
