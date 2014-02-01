@@ -3,11 +3,11 @@
 
 
 import os
+import six
 import logging
 from itertools import chain
 
 from pelican import signals, Pelican
-from pelican.settings import read_settings
 from pelican.contents import Page, Article
 
 
@@ -35,30 +35,36 @@ def disable_lang_vars(pelican_obj):
 def create_lang_subsites(pelican_obj):
     """For each language create a subsite using the lang-specific config
 
-    append language code to SITEURL and OUTPUT_PATH for each generated lang"""
+    for each generated lang append language subpath to SITEURL and OUTPUT_PATH
+    and set DEFAULT_LANG to the language code to change perception of what is translated
+    and set DELETE_OUTPUT_DIRECTORY to False to prevent deleting output from previous runs
+    Then generate the subsite using a PELICAN_CLASS instance and its run method.
+    """
     global _main_site_generated, _main_site_root, _main_site_lang
     if _main_site_generated:
         return
     else:
         _main_site_generated = True
 
-    orig_settings = pelican_obj.settings.copy()
+    orig_settings = pelican_obj.settings
     _main_site_root = orig_settings['SITEURL']
     _main_site_lang = orig_settings['DEFAULT_LANG']
-    for lang, config_path in pelican_obj.settings.get('I18N_CONF_OVERRIDES', {}).items():
-        try:
-            overrides = read_settings(config_path)
-        except Exception:
-            logging.error("Cannot read config overrides '{}' for lang '{}', skipping.".format(config_path, lang))
-            continue
+    for lang, overrides in orig_settings.get('I18N_SUBSITES', {}).items():
         settings = orig_settings.copy()
         settings.update(overrides)
-        settings['PATH'] = orig_settings['PATH']   #it got reinitialized
         settings['SITEURL'] = _main_site_root + '/' + lang
         settings['OUTPUT_PATH'] = os.path.join(settings['OUTPUT_PATH'], lang, '')
-        settings['DEFAULT_LANG'] = lang   #to change what is perceived as translations
-        settings['DELETE_OUTPUT_DIRECTORY'] = False
-        pelican_obj = Pelican(settings)   #TODO use PELICAN_CLASS
+        settings['DEFAULT_LANG'] = lang   # to change what is perceived as translations
+        settings['DELETE_OUTPUT_DIRECTORY'] = False # prevent deletion of previous runs
+        
+        cls = settings['PELICAN_CLASS']
+        if isinstance(cls, six.string_types):
+            module, cls_name = cls.rsplit('.', 1)
+            module = __import__(module)
+            cls = getattr(module, cls_name)
+
+        pelican_obj = cls(settings)
+        logger.debug("Generating i18n subsite for lang '{}' using class '{}'".format(lang, str(cls)))
         pelican_obj.run()
 
 
@@ -72,7 +78,7 @@ def hide_untranslated_content(generator, *args):
         return
     is_pages_gen = hasattr(generator, 'pages')
     contents = generator.pages if is_pages_gen else generator.articles
-    hidden_contenets = generator.hidden_pages if is_pages_gen else generator.drafts 
+    hidden_contents = generator.hidden_pages if is_pages_gen else generator.drafts 
     print(contents)
     default_lang = generator.settings['DEFAULT_LANG']
     for content_object in contents:
@@ -83,7 +89,7 @@ def hide_untranslated_content(generator, *args):
             elif isinstance(content_object, Article):
                 content_object.status = 'draft'        
             contents.remove(content_object)
-            hidden_contenets.append(content_object)
+            hidden_contents.append(content_object)
 
 
             
@@ -91,7 +97,7 @@ def move_translations_links(content_object):
     """This function points translations links to the sub-sites
 
     by prepending their location with the language code
-    or directs a DEFAULT_LANG translation back to top level site
+    or directs an original DEFAULT_LANG translation back to top level site
     """
     for translation in content_object.translations:
         if translation.lang == _main_site_lang:
