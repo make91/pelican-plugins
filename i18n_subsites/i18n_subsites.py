@@ -136,6 +136,10 @@ def update_generator_contents(generator, *args):
 
 
 def install_templates_translations(generator):
+    """Install gettext translations for current DEFAULT_LANG in the jinja2.Environment
+
+    if the 'jinja2.ext.i18n' jinja2 extension is enabled
+    """
     if 'jinja2.ext.i18n' not in generator.settings['JINJA_EXTENSIONS']:
         return
     domain = generator.settings.get('I18N_GETTEXT_DOMAIN', 'messages')
