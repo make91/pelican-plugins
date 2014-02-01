@@ -149,7 +149,6 @@ def install_templates_translations(generator):
     languages = [generator.settings['DEFAULT_LANG']]
     translations = gettext.translation(domain, localedir, languages)
     generator.env.install_gettext_translations(translations)
-    # TODO must set the DEFAULT_LANG as the one to use by gettext
 
 
 
