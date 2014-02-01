@@ -1,4 +1,4 @@
-"""Site i18n plugin creates i18n-ized subsites of the default site"""
+"""i18n_subsites plugin creates i18n-ized subsites of the default site"""
 
 
 
