@@ -150,7 +150,7 @@ def install_templates_translations(generator):
     try:
         translations = gettext.translation(domain, localedir, languages)
     except (IOError, OSError):
-        logger.error("Cannot find translations for language '{}' in '{}' with domain '{}'. Installing NullTranslations.".format(languages[0], localedir, domain)
+        logger.error("Cannot find translations for language '{}' in '{}' with domain '{}'. Installing NullTranslations.".format(languages[0], localedir, domain))
         translations = gettext.NullTranslations()
     generator.env.install_gettext_translations(translations)
 
