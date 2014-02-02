@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2014-02-02 05:36+0100\n"
+"POT-Creation-Date: 2014-02-02 20:10+0100\n"
 "PO-Revision-Date: 2014-02-01 21:38+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: cs <LL@li.org>\n"
@@ -18,6 +18,14 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 1.3\n"
 
+#: templates/base.html:44
+msgid "blogroll"
+msgstr "odkazy"
+
+#: templates/base.html:54
+msgid "social"
+msgstr "sociální sítě"
+
 #: templates/base.html:73
 msgid ""
 "Proudly powered by <a href=\"http://getpelican.com/\">Pelican</a>, which "
@@ -26,7 +34,31 @@ msgstr ""
 "S hrdostí poháněn enginem <a href=\"http://getpelican.com/\">Pelican</a>,"
 " který využívá <a href=\"http://python.org\">Python</a>."
 
-#: templates/base.html:75
-msgid "Hello World!"
-msgstr "Ahoj světe!"
+#: templates/base.html:74
+msgid ""
+"Sources for this site can be found in the <a href=\"http://github.com"
+"/\">gh-pages_source branch</a> of this plugin repository."
+msgstr ""
+"Zdrojové kódy pro tyto stránky lze nalézt ve <a href=\"http://github.com"
+"/\">větvi gh-pages_source</a> tohoto repozitáře pluginů"
+
+
+#: templates/index.html:20
+msgid "Other articles"
+msgstr "Další články"
+
+#: templates/index.html:39
+msgid "read more"
+msgstr "číst více"
+
+#: templates/taglist.html:1
+msgid "tags"
+msgstr "štítky"
+
+#: templates/translations.html:3
+msgid "Translations"
+msgstr "Překlady"
+
+#~ msgid "Hello World!"
+#~ msgstr "Ahoj světe!"
 

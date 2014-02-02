@@ -41,7 +41,7 @@
         <section id="extras" class="body">
         {% if LINKS %}
                 <div class="blogroll">
-                        <h2>blogroll</h2>
+                    <h2>{% trans %}blogroll{% endtrans %}</h2>
                         <ul>
                         {% for name, link in LINKS %}
                             <li><a href="{{ link }}">{{ name }}</a></li>
@@ -51,7 +51,7 @@
         {% endif %}
         {% if SOCIAL or FEED_ALL_ATOM or FEED_ALL_RSS %}
                 <div class="social">
-                        <h2>social</h2>
+                    <h2>{% trans %}social{% endtrans %}</h2>
                         <ul>
                             {% if FEED_ALL_ATOM %}
                             <li><a href="{{ FEED_DOMAIN }}/{{ FEED_ALL_ATOM }}" type="application/atom+xml" rel="alternate">atom feed</a></li>
@@ -71,8 +71,8 @@
         <footer id="contentinfo" class="body">
                 <address id="about" class="vcard body">
                 {% trans %}Proudly powered by <a href="http://getpelican.com/">Pelican</a>, which takes great advantage of <a href="http://python.org">Python</a>.{% endtrans %}
+                {% trans %}Sources for this site can be found in the <a href="http://github.com/">gh-pages_source branch</a> of this plugin repository.{% endtrans %}
                 </address><!-- /#about -->
-                {{ main_lang }} {{ main_siteurl|length }} {{ extra_siteurls }} {{ gettext('Hello World!') }}
         </footer><!-- /#contentinfo -->
 
 {% include 'analytics.html' %}

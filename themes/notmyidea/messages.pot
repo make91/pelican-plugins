@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2014-02-02 05:36+0100\n"
+"POT-Creation-Date: 2014-02-02 20:10+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,13 +17,39 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 1.3\n"
 
+#: templates/base.html:44
+msgid "blogroll"
+msgstr ""
+
+#: templates/base.html:54
+msgid "social"
+msgstr ""
+
 #: templates/base.html:73
 msgid ""
 "Proudly powered by <a href=\"http://getpelican.com/\">Pelican</a>, which "
 "takes great advantage of <a href=\"http://python.org\">Python</a>."
 msgstr ""
 
-#: templates/base.html:75
-msgid "Hello World!"
+#: templates/base.html:74
+msgid ""
+"Sources for this site can be found in the <a href=\"http://github.com"
+"/\">gh-pages_source branch</a> of this plugin repository."
+msgstr ""
+
+#: templates/index.html:20
+msgid "Other articles"
+msgstr ""
+
+#: templates/index.html:39
+msgid "read more"
+msgstr ""
+
+#: templates/taglist.html:1
+msgid "tags"
+msgstr ""
+
+#: templates/translations.html:3
+msgid "Translations"
 msgstr ""
 
