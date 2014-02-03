@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*- #
 from __future__ import unicode_literals
 
-AUTHOR = 'Ondřej Grover'
-SITENAME = 'Pelican i18n_subsites plugin'
+AUTHOR = 'smartass101'
+SITENAME = "smartass101's Pelican plugins"
 SITEURL = ''
 
 PATH = 'content'
@@ -43,6 +43,6 @@ THEME = 'themes/notmyidea/'
 DEFAULT_LANG = "en"
 I18N_SUBSITES = {
         'cz': {
-            'SITENAME': 'Pelican i18n_subsites doplňek',
+            'SITENAME': 'smartass101ovy Pelican doplňky',
             },
         }
