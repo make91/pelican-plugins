@@ -46,3 +46,7 @@ I18N_SUBSITES = {
             'SITENAME': 'smartass101ovy Pelican doplňky',
             },
         }
+
+DEFAULT_CATEGORY = 'i18n_subsites'
+
+OUTPUT_SOURCES = True
