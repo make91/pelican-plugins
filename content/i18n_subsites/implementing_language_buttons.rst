@@ -45,6 +45,37 @@ Now it's just a matter of using the filter in the ``base.html`` template at the 
    {% for title, link in MENUITEMS %}
    <!-- SNIP -->
 
+
+Different design
+----------------
+
+Later I decided that I want to show the active language in the navbar too
+.
+So, I needed a list of all the languages the site supports, so I used the *I18N_SUBSITES* dictionary as it is available in templates (because it is an all-caps config setting) and extracted the list of languages as ``I18N_SUBSITES.keys()``.
+
+Here is the slightly modified template
+
+.. code-block:: jinja
+
+   <!-- SNIP -->
+   <nav><ul>
+   {% if extra_siteurls and I18N_SUBSITES %}
+   {% for lang in [main_lang] + (I18N_SUBSITES.keys() | list) %}
+   <li{% if lang == DEFAULT_LANG %} class="active"{% endif %}><a href="{{ extra_siteurls.get(lang, SITEURL) }}">{{ lang | lookup_lang_name }}</a></li>
+   {% endfor %}
+   {% endif %}
+   <!-- separator -->
+   <li style="background-color: white; padding: 5px;">&nbsp</li>
+   {% for title, link in MENUITEMS %}
+   <!-- SNIP -->
+
+What it does:
+
+1. get a list of all languages as the main language (``main_lang`` exported by the ``i18n_subsites`` plugin) and the subsites languages. The list filter is needed as ``keys()`` does not return a list and the list concatenation (``+``) would not work
+2. for each lang it makes link and makes it active if it is the *DEFAULT_LANG* of the currently rendered subsite
+3. gets the url for the (sub)site. If the lang is not ins ``extra_siteurls*``, it must be the current *DEFAULT_LANG*, so use the current *SITEURL*
+4. looks up the language name
+
 You can see the result for yourself at the top of the page.
 
 .. [#flags] Although it may look nice, `w3 discourages it <http://www.w3.org/TR/i18n-html-tech-lang/#ri20040808.173208643>`_.
