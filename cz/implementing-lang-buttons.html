@@ -2,7 +2,7 @@
 <html lang="cz">
 <head>
         <meta charset="utf-8" />
-        <title>smartass101ovy Pelican doplňky</title>
+        <title>Implementing language buttons</title>
         <link rel="stylesheet" href="http://smartass101.github.io/pelican-plugins/cz/theme/css/main.css" />
         <link href="http://smartass101.github.io/pelican-plugins/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="smartass101ovy Pelican doplňky Atom Feed" />
 
@@ -18,14 +18,19 @@
 		    <li><a href="http://smartass101.github.io/pelican-plugins">English</a></li>
 		    <!-- separator -->
 		    <li style="background-color: white; padding: 5px;">&nbsp</li>
-                    <li><a href="http://smartass101.github.io/pelican-plugins/cz/category/i18n_subsites.html">i18n_subsites</a></li>
+                    <li class="active"><a href="http://smartass101.github.io/pelican-plugins/cz/category/i18n_subsites.html">i18n_subsites</a></li>
                 </ul>
 		</nav>		
         </header><!-- /#banner -->
+<section id="content" class="body">
+  <article>
+    <header>
+      <h1 class="entry-title">
+        <a href="http://smartass101.github.io/pelican-plugins/cz/implementing-lang-buttons.html" rel="bookmark"
+           title="Permalink to Implementing language buttons">Implementing language buttons</a></h1>
+    </header>
 
-            <aside id="featured" class="body">
-                <article>
-                    <h1 class="entry-title"><a href="http://smartass101.github.io/pelican-plugins/cz/implementing-lang-buttons.html">Implementing language buttons</a></h1>
+    <div class="entry-content">
 <footer class="post-info">
         <abbr class="published" title="2014-02-03T00:00:00">
 Publikováno: Mon 03 February 2014
@@ -36,7 +41,7 @@ Od <a class="url fn" href="http://smartass101.github.io/pelican-plugins/cz/autho
         </address>
         <p>V <a href="http://smartass101.github.io/pelican-plugins/cz/category/i18n_subsites.html">i18n_subsites</a>. </p>
 
-</footer><!-- /.post-info --><p>Each article with translations has translations links, but that's the only way to switch between language subsites.</p>
+</footer><!-- /.post-info -->      <p>Each article with translations has translations links, but that's the only way to switch between language subsites.</p>
 <p>I wanted to make it simple to switch between the language subsites on all pages, so I decided to add language buttons to the top menu bar.</p>
 <p>For this purpose I used the <tt class="docutils literal">extra_siteurls</tt> dictionary exported by the <tt class="docutils literal">i18n_subsites</tt> plugin into the template context. This dictionary mapps the language code to the SITEURL of the respective subsite. But I wanted the language button to show the names of the language codes, not just the language codes.</p>
 <p>Perhaps I should have added support for putting the names in <tt class="docutils literal">I18N_SUBSITES</tt> and exporting the names in <tt class="docutils literal">extra_siteurls</tt> too? No, I want to keep the <tt class="docutils literal">i18n_subsites</tt> plugin as simple as possible and let people add features onto it. IMHO that is better than making many assumptions about what people may want, because you cannot please everyone, e.g. somebody would rather put there flags <a class="footnote-reference" href="#flags" id="id1">[1]</a>.</p>
@@ -73,42 +78,11 @@ Od <a class="url fn" href="http://smartass101.github.io/pelican-plugins/cz/autho
 <tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td>Although it may look nice, <a class="reference external" href="http://www.w3.org/TR/i18n-html-tech-lang/#ri20040808.173208643">w3 discourages it</a>.</td></tr>
 </tbody>
 </table>
-                </article>
-            </aside><!-- /#featured -->
-                <section id="content" class="body">
-                <h1>Další články</h1>
-                    <hr />
-                    <ol id="posts-list" class="hfeed">
 
-            <li><article class="hentry">
-                <header>
-                    <h1><a href="http://smartass101.github.io/pelican-plugins/cz/translated-article.html" rel="bookmark"
-                           title="Permalink to Přeložený příspěvek">Přeložený příspěvek</a></h1>
-                </header>
+    </div><!-- /.entry-content -->
 
-                <div class="entry-content">
-<footer class="post-info">
-        <abbr class="published" title="2014-02-02T00:00:00">
-Publikováno: Sun 02 February 2014
-        </abbr>
-
-        <address class="vcard author">
-Od <a class="url fn" href="http://smartass101.github.io/pelican-plugins/cz/author/smartass101.html">smartass101</a>
-        </address>
-        <p>V <a href="http://smartass101.github.io/pelican-plugins/cz/category/i18n_subsites.html">i18n_subsites</a>. </p>
-<p>štítky: <a href="http://smartass101.github.io/pelican-plugins/cz/tag/priklad.html">příklad</a></p>Překlady:
-        <a href="http://smartass101.github.io/pelican-plugins/cz/../translated-article.html">en</a>
-
-</footer><!-- /.post-info -->                <p>Tento příspěvek má překlad, klikni na odkaz na překlad. Všimni si, že štítek je také přeložen.</p>
-
-                <a class="readmore" href="http://smartass101.github.io/pelican-plugins/cz/translated-article.html">číst více</a>
-                </div><!-- /.entry-content -->
-            </article></li>
-            </ol><!-- /#posts-list -->
-<p class="paginator">
-Stránka 1 / 1
-</p>
-            </section><!-- /#content -->
+  </article>
+</section>
         <section id="extras" class="body">
                 <div class="blogroll">
                     <h2>odkazy</h2>

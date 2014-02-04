@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
         <meta charset="utf-8" />
-        <title>smartass101's Pelican plugins - Ondřej Grover</title>
+        <title>smartass101's Pelican plugins - example</title>
         <link rel="stylesheet" href="http://smartass101.github.io/pelican-plugins/theme/css/main.css" />
         <link href="http://smartass101.github.io/pelican-plugins/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="smartass101's Pelican plugins Atom Feed" />
 
@@ -25,36 +25,54 @@
 
             <aside id="featured" class="body">
                 <article>
-                    <h1 class="entry-title"><a href="http://smartass101.github.io/pelican-plugins/i18n_subsites-plugin-released.html">i18n_subsites plugin released</a></h1>
+                    <h1 class="entry-title"><a href="http://smartass101.github.io/pelican-plugins/translated-article.html">A translated article</a></h1>
 <footer class="post-info">
-        <abbr class="published" title="2014-02-05T00:00:00">
-Published: Wed 05 February 2014
+        <abbr class="published" title="2014-02-02T00:00:00">
+Published: Sun 02 February 2014
         </abbr>
 
         <address class="vcard author">
-By <a class="url fn" href="http://smartass101.github.io/pelican-plugins/author/ondrej-grover.html">Ondřej Grover</a>
+By <a class="url fn" href="http://smartass101.github.io/pelican-plugins/author/smartass101.html">smartass101</a>
         </address>
         <p>In <a href="http://smartass101.github.io/pelican-plugins/category/i18n_subsites.html">i18n_subsites</a>. </p>
+<p>tags: <a href="http://smartass101.github.io/pelican-plugins/tag/example.html">example</a></p>Translations:
+        <a href="http://smartass101.github.io/pelican-plugins/cz/translated-article.html">cz</a>
 
-</footer><!-- /.post-info --><p>Pelican supports article and page translations <a class="reference external" href="https://github.com/getpelican/pelican/blob/master/docs/changelog.rst#26-2011-03-08">since version 2.6</a>.
-However, this functionality does not include translations of themes or the site name, something many have asked for.</p>
-<p>The new i18n_subsites plugin makes it simple to:</p>
-<ul class="simple">
-<li>override settings for each language, e.g. <tt class="docutils literal">SITENAME</tt> or <tt class="docutils literal">MENUITEMS</tt></li>
-<li>translate and localize themes using <tt class="docutils literal">jinja2.ext.i18n</tt></li>
-<li>automatically create translated subsites like <a class="reference external" href="http://example.com/fr/">http://example.com/fr/</a></li>
-</ul>
-<p>It is available in the <a class="reference external" href="https://github.com/getpelican/pelican-plugins/tree/master/i18n_subsites">Pelican plugin repository</a>.</p>
-<p>A <a class="reference external" href="http://smartass101.github.io/pelican-plugins/">demo site</a> has been put up to showcase the plugin.
-You can use the <a class="reference external" href="https://github.com/smartass101/pelican-plugins/tree/gh-pages_source">sources for the site</a> as a reference for using the plugin in your own site.</p>
-<p>Althoug this plugin has been tested, it is quite possible that you will find some bugs or incovenient behavior as it is very new. Do not hesitate to file an issue!</p>
-<p>Finally, I would like to thank the Pelican developers for implementing and designing Pelican so well that making this plugin was straightforward, fast and fun.</p>
+</footer><!-- /.post-info --><p>This article has a translation, the translation link will take you to it.
+Notice that the translation can have a different tag, so even tags can be translated.</p>
                 </article>
+            </aside><!-- /#featured -->
+                <section id="content" class="body">
+                <h1>Other articles</h1>
+                    <hr />
+                    <ol id="posts-list" class="hfeed">
+
+            <li><article class="hentry">
+                <header>
+                    <h1><a href="http://smartass101.github.io/pelican-plugins/untranslated-article.html" rel="bookmark"
+                           title="Permalink to An untranslated article">An untranslated article</a></h1>
+                </header>
+
+                <div class="entry-content">
+<footer class="post-info">
+        <abbr class="published" title="2014-02-01T00:00:00">
+Published: Sat 01 February 2014
+        </abbr>
+
+        <address class="vcard author">
+By <a class="url fn" href="http://smartass101.github.io/pelican-plugins/author/smartass101.html">smartass101</a>
+        </address>
+        <p>In <a href="http://smartass101.github.io/pelican-plugins/category/i18n_subsites.html">i18n_subsites</a>. </p>
+<p>tags: <a href="http://smartass101.github.io/pelican-plugins/tag/example.html">example</a></p>
+</footer><!-- /.post-info -->                <p>This article has no translation, so you will find it as a <a class="reference external" href="cz/drafts/untranslated-article.html">draft</a> in the Czech subsite, because I have <tt class="docutils literal">I18N_HIDE_UNTRANSLATED_CONTENT</tt> as True (the default).</p>
+
+                <a class="readmore" href="http://smartass101.github.io/pelican-plugins/untranslated-article.html">read more</a>
+                </div><!-- /.entry-content -->
+            </article></li>
+            </ol><!-- /#posts-list -->
 <p class="paginator">
 Page 1 / 1
 </p>
-            </aside><!-- /#featured -->
-            </ol><!-- /#posts-list -->
             </section><!-- /#content -->
         <section id="extras" class="body">
                 <div class="blogroll">
