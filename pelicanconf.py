@@ -65,3 +65,11 @@ def lookup_lang_name(lang_code):
 JINJA_FILTERS = {
     'lookup_lang_name': lookup_lang_name,
     }
+
+STATIC_PATHS = ['images', 'files']
+
+EXTRA_PATH_METADATA = {
+    'files/.nojekyll': {
+        'path': '.nojekyll',
+        },
+    }
