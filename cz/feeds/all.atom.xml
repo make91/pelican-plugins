@@ -1,42 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>smartass101ovy Pelican doplňky</title><link href="http://smartass101.github.io/pelican-plugins/cz/" rel="alternate"></link><link href="http://smartass101.github.io/pelican-plugins/feeds/all.atom.xml" rel="self"></link><id>http://smartass101.github.io/pelican-plugins/cz/</id><updated>2014-02-03T00:00:00+01:00</updated><entry><title>Implementing language buttons</title><link href="http://smartass101.github.io/pelican-plugins/cz/implementing-lang-buttons.html" rel="alternate"></link><updated>2014-02-03T00:00:00+01:00</updated><author><name>smartass101</name></author><id>tag:smartass101.github.io,2014-02-03:pelican-plugins/cz/implementing-lang-buttons.html</id><summary type="html">&lt;p&gt;Each article with translations has translations links, but that's the only way to switch between language subsites.&lt;/p&gt;
-&lt;p&gt;I wanted to make it simple to switch between the language subsites on all pages, so I decided to add language buttons to the top menu bar.&lt;/p&gt;
-&lt;p&gt;For this purpose I used the &lt;tt class="docutils literal"&gt;extra_siteurls&lt;/tt&gt; dictionary exported by the &lt;tt class="docutils literal"&gt;i18n_subsites&lt;/tt&gt; plugin into the template context. This dictionary mapps the language code to the SITEURL of the respective subsite. But I wanted the language button to show the names of the language codes, not just the language codes.&lt;/p&gt;
-&lt;p&gt;Perhaps I should have added support for putting the names in &lt;tt class="docutils literal"&gt;I18N_SUBSITES&lt;/tt&gt; and exporting the names in &lt;tt class="docutils literal"&gt;extra_siteurls&lt;/tt&gt; too? No, I want to keep the &lt;tt class="docutils literal"&gt;i18n_subsites&lt;/tt&gt; plugin as simple as possible and let people add features onto it. IMHO that is better than making many assumptions about what people may want, because you cannot please everyone, e.g. somebody would rather put there flags &lt;a class="footnote-reference" href="#flags" id="id1"&gt;[1]&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;So, the (IMHO) simplest way to support this is to make a simple jinja2 filter that translates the language code to the language name via a dictionary. Here is the relevant part of my pelicanconf.py&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="n"&gt;languages_lookup&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
-             &lt;span class="s"&gt;&amp;#39;en&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s"&gt;&amp;#39;English&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
-             &lt;span class="s"&gt;&amp;#39;cz&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s"&gt;&amp;#39;Čeština&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
-             &lt;span class="p"&gt;}&lt;/span&gt;
-
-&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;loopkup_lang_name&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;lang_code&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
-    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;languages_lookup&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;lang_code&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
-
-&lt;span class="n"&gt;JINJA_FILTERS&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
-             &lt;span class="s"&gt;&amp;#39;lookup_lang_name&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;lookup_lang_name&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
-             &lt;span class="p"&gt;}&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;Now it's just a matter of using the filter in the &lt;tt class="docutils literal"&gt;base.html&lt;/tt&gt; template at the beginning of the navbar&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="x"&gt;&amp;lt;!-- SNIP --&amp;gt;&lt;/span&gt;
-&lt;span class="x"&gt;&amp;lt;nav&amp;gt;&amp;lt;ul&amp;gt;&lt;/span&gt;
-&lt;span class="cp"&gt;{%&lt;/span&gt; &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="nv"&gt;extra_siteurls&lt;/span&gt; &lt;span class="cp"&gt;%}&lt;/span&gt;&lt;span class="x"&gt;&lt;/span&gt;
-&lt;span class="cp"&gt;{%&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="nv"&gt;lang&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="nv"&gt;url&lt;/span&gt; &lt;span class="k"&gt;in&lt;/span&gt; &lt;span class="nv"&gt;extra_siteurls.items&lt;/span&gt;&lt;span class="o"&gt;()&lt;/span&gt; &lt;span class="cp"&gt;%}&lt;/span&gt;&lt;span class="x"&gt;&lt;/span&gt;
-&lt;span class="x"&gt;&amp;lt;li&amp;gt;&amp;lt;a href=&amp;quot;&lt;/span&gt;&lt;span class="cp"&gt;{{&lt;/span&gt; &lt;span class="nv"&gt;url&lt;/span&gt; &lt;span class="cp"&gt;}}&lt;/span&gt;&lt;span class="x"&gt;&amp;quot;&amp;gt;&lt;/span&gt;&lt;span class="cp"&gt;{{&lt;/span&gt; &lt;span class="nv"&gt;lang&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="nf"&gt;lookup_lang_name&lt;/span&gt; &lt;span class="cp"&gt;}}&lt;/span&gt;&lt;span class="x"&gt;&amp;lt;/a&amp;gt;&amp;lt;/li&amp;gt;&lt;/span&gt;
-&lt;span class="cp"&gt;{%&lt;/span&gt; &lt;span class="k"&gt;endfor&lt;/span&gt; &lt;span class="cp"&gt;%}&lt;/span&gt;&lt;span class="x"&gt;&lt;/span&gt;
-&lt;span class="cp"&gt;{%&lt;/span&gt; &lt;span class="k"&gt;endif&lt;/span&gt; &lt;span class="cp"&gt;%}&lt;/span&gt;&lt;span class="x"&gt;&lt;/span&gt;
-&lt;span class="x"&gt;&amp;lt;!-- separator --&amp;gt;&lt;/span&gt;
-&lt;span class="x"&gt;&amp;lt;li style=&amp;quot;background-color: white; padding: 5px;&amp;quot;&amp;gt;&amp;amp;nbsp&amp;lt;/li&amp;gt;&lt;/span&gt;
-&lt;span class="cp"&gt;{%&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="nv"&gt;title&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="nv"&gt;link&lt;/span&gt; &lt;span class="k"&gt;in&lt;/span&gt; &lt;span class="nv"&gt;MENUITEMS&lt;/span&gt; &lt;span class="cp"&gt;%}&lt;/span&gt;&lt;span class="x"&gt;&lt;/span&gt;
-&lt;span class="x"&gt;&amp;lt;!-- SNIP --&amp;gt;&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;You can see the result for yourself at the top of the page.&lt;/p&gt;
-&lt;table class="docutils footnote" frame="void" id="flags" rules="none"&gt;
-&lt;colgroup&gt;&lt;col class="label" /&gt;&lt;col /&gt;&lt;/colgroup&gt;
-&lt;tbody valign="top"&gt;
-&lt;tr&gt;&lt;td class="label"&gt;&lt;a class="fn-backref" href="#id1"&gt;[1]&lt;/a&gt;&lt;/td&gt;&lt;td&gt;Although it may look nice, &lt;a class="reference external" href="http://www.w3.org/TR/i18n-html-tech-lang/#ri20040808.173208643"&gt;w3 discourages it&lt;/a&gt;.&lt;/td&gt;&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-</summary></entry><entry><title>Přeložený příspěvek</title><link href="http://smartass101.github.io/pelican-plugins/cz/translated-article.html" rel="alternate"></link><updated>2014-02-02T00:00:00+01:00</updated><author><name>smartass101</name></author><id>tag:smartass101.github.io,2014-02-02:pelican-plugins/cz/translated-article.html</id><summary type="html">&lt;p&gt;Tento příspěvek má překlad, klikni na odkaz na překlad. Všimni si, že štítek je také přeložen.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>smartass101ovy Pelican doplňky</title><link href="http://smartass101.github.io/pelican-plugins/cz/" rel="alternate"></link><link href="http://smartass101.github.io/pelican-plugins/feeds/all.atom.xml" rel="self"></link><id>http://smartass101.github.io/pelican-plugins/cz/</id><updated>2014-02-02T00:00:00+01:00</updated><entry><title>Přeložený příspěvek</title><link href="http://smartass101.github.io/pelican-plugins/cz/translated-article.html" rel="alternate"></link><updated>2014-02-02T00:00:00+01:00</updated><author><name>smartass101</name></author><id>tag:smartass101.github.io,2014-02-02:pelican-plugins/cz/translated-article.html</id><summary type="html">&lt;p&gt;Tento příspěvek má překlad, klikni na odkaz na překlad. Všimni si, že štítek je také přeložen.&lt;/p&gt;
 </summary><category term="příklad"></category></entry><entry><title>A translated article</title><link href="http://smartass101.github.io/pelican-plugins/cz/../translated-article.html" rel="alternate"></link><updated>2014-02-02T00:00:00+01:00</updated><author><name>smartass101</name></author><id>tag:smartass101.github.io,2014-02-02:pelican-plugins/cz/../translated-article.html</id><summary type="html">&lt;p&gt;This article has a translation, the translation link will take you to it.
 Notice that the translation can have a different tag, so even tags can be translated.&lt;/p&gt;
 </summary><category term="example"></category></entry></feed>
