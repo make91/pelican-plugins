@@ -50,7 +50,7 @@ I18N_SUBSITES = {
             },
         }
 
-DEFAULT_CATEGORY = 'i18n_subsites'
+DEFAULT_CATEGORY = 'misc'
 
 OUTPUT_SOURCES = True
 
