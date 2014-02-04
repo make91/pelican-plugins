@@ -82,7 +82,8 @@ So, I needed a list of all the languages the site supports, so I used the &lt;em
 &lt;li&gt;it has the same &lt;tt class="docutils literal"&gt;slug&lt;/tt&gt; metadata&lt;/li&gt;
 &lt;li&gt;has a different &lt;tt class="docutils literal"&gt;lang&lt;/tt&gt; metadata&lt;/li&gt;
 &lt;/ol&gt;
-</summary><category term="example"></category></entry><entry><title>Přeložený příspěvek</title><link href="http://smartass101.github.io/pelican-plugins/cz/translated-article.html" rel="alternate"></link><updated>2014-02-02T00:00:00+01:00</updated><author><name>smartass101</name></author><id>tag:smartass101.github.io,2014-02-02:pelican-plugins/cz/translated-article.html</id><summary type="html">&lt;p&gt;Tento příspěvek má překlad, klikněte na odkaz rpo přechod na překlad.&lt;/p&gt;
+&lt;p&gt;If you want the translation to have a different filename and url than the slug in the original language, use the &lt;tt class="docutils literal"&gt;save_as&lt;/tt&gt; and &lt;tt class="docutils literal"&gt;url&lt;/tt&gt; metadata as this translation link shows.&lt;/p&gt;
+</summary><category term="example"></category></entry><entry><title>Přeložený příspěvek</title><link href="http://smartass101.github.io/pelican-plugins/cz/prelozeny.html" rel="alternate"></link><updated>2014-02-02T00:00:00+01:00</updated><author><name>smartass101</name></author><id>tag:smartass101.github.io,2014-02-02:pelican-plugins/cz/prelozeny.html</id><summary type="html">&lt;p&gt;Tento příspěvek má překlad, klikněte na odkaz rpo přechod na překlad.&lt;/p&gt;
 &lt;p&gt;Všimněte si, že štítek je také přeložen, takže i štítky se dají přeložit.&lt;/p&gt;
 &lt;p&gt;Jak je pospáno v &lt;a class="reference external" href="http://docs.getpelican.com/en/3.3.0/getting_started.html#translations"&gt;dokumentaci překladů Pelican enginu&lt;/a&gt;, příspěvek je považován za překlad jiného příspěvku, pokud&lt;/p&gt;
 &lt;ol class="arabic simple"&gt;

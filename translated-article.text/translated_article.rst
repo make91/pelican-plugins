@@ -14,3 +14,5 @@ As described in the `Pelican translations documentation <http://docs.getpelican.
 
 1. it has the same ``slug`` metadata
 2. has a different ``lang`` metadata
+
+If you want the translation to have a different filename and url than the slug in the original language, use the ``save_as`` and ``url`` metadata as this translation link shows.

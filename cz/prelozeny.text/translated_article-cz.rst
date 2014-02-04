@@ -5,6 +5,8 @@ Přeložený příspěvek
 :lang: cz
 :slug: translated-article
 :tags: příklad
+:save_as: prelozeny.html
+:url: prelozeny.html
 
 Tento příspěvek má překlad, klikněte na odkaz rpo přechod na překlad. 
 
