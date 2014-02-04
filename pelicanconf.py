@@ -46,9 +46,10 @@ LOCALE = 'en_US'
 I18N_SUBSITES = {
         'cz': {
             'SITENAME': 'smartass101ovy Pelican doplňky',
-            'LOCALE': 'cs_CZ',
+            'LOCALE': 'cs_CZ',            #This is somewhat redundant with DATE_FORMATS, but IMHO more convenient
             },
         }
+
 
 DEFAULT_CATEGORY = 'misc'
 
