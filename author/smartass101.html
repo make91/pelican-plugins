@@ -15,6 +15,7 @@
         <header id="banner" class="body">
                 <h1><a href="http://smartass101.github.io/pelican-plugins/">smartass101's Pelican plugins </a></h1>
                 <nav><ul>
+		    <li class="active"><a href="http://smartass101.github.io/pelican-plugins">English</a></li>
 		    <li><a href="http://smartass101.github.io/pelican-plugins/cz">Čeština</a></li>
 		    <!-- separator -->
 		    <li style="background-color: white; padding: 5px;">&nbsp</li>
@@ -66,6 +67,31 @@ By <a class="url fn" href="http://smartass101.github.io/pelican-plugins/author/s
 <span class="cp">{%</span> <span class="k">for</span> <span class="nv">title</span><span class="o">,</span> <span class="nv">link</span> <span class="k">in</span> <span class="nv">MENUITEMS</span> <span class="cp">%}</span><span class="x"></span>
 <span class="x">&lt;!-- SNIP --&gt;</span>
 </pre></div>
+<div class="section" id="different-design">
+<h2>Different design</h2>
+<p>Later I decided that I want to show the active language in the navbar too
+.
+So, I needed a list of all the languages the site supports, so I used the <em>I18N_SUBSITES</em> dictionary as it is available in templates (because it is an all-caps config setting) and extracted the list of languages as <tt class="docutils literal">I18N_SUBSITES.keys()</tt>.</p>
+<p>Here is the slightly modified template</p>
+<div class="highlight"><pre><span class="x">&lt;!-- SNIP --&gt;</span>
+<span class="x">&lt;nav&gt;&lt;ul&gt;</span>
+<span class="cp">{%</span> <span class="k">if</span> <span class="nv">extra_siteurls</span> <span class="k">and</span> <span class="nv">I18N_SUBSITES</span> <span class="cp">%}</span><span class="x"></span>
+<span class="cp">{%</span> <span class="k">for</span> <span class="nv">lang</span> <span class="k">in</span> <span class="o">[</span><span class="nv">main_lang</span><span class="o">]</span> <span class="o">+</span> <span class="o">(</span><span class="nv">I18N_SUBSITES.keys</span><span class="o">()</span> <span class="o">|</span> <span class="nf">list</span><span class="o">)</span> <span class="cp">%}</span><span class="x"></span>
+<span class="x">&lt;li</span><span class="cp">{%</span> <span class="k">if</span> <span class="nv">lang</span> <span class="o">==</span> <span class="nv">DEFAULT_LANG</span> <span class="cp">%}</span><span class="x"> class=&quot;active&quot;</span><span class="cp">{%</span> <span class="k">endif</span> <span class="cp">%}</span><span class="x">&gt;&lt;a href=&quot;</span><span class="cp">{{</span> <span class="nv">extra_siteurls.get</span><span class="o">(</span><span class="nv">lang</span><span class="o">,</span> <span class="nv">SITEURL</span><span class="o">)</span> <span class="cp">}}</span><span class="x">&quot;&gt;</span><span class="cp">{{</span> <span class="nv">lang</span> <span class="o">|</span> <span class="nf">lookup_lang_name</span> <span class="cp">}}</span><span class="x">&lt;/a&gt;&lt;/li&gt;</span>
+<span class="cp">{%</span> <span class="k">endfor</span> <span class="cp">%}</span><span class="x"></span>
+<span class="cp">{%</span> <span class="k">endif</span> <span class="cp">%}</span><span class="x"></span>
+<span class="x">&lt;!-- separator --&gt;</span>
+<span class="x">&lt;li style=&quot;background-color: white; padding: 5px;&quot;&gt;&amp;nbsp&lt;/li&gt;</span>
+<span class="cp">{%</span> <span class="k">for</span> <span class="nv">title</span><span class="o">,</span> <span class="nv">link</span> <span class="k">in</span> <span class="nv">MENUITEMS</span> <span class="cp">%}</span><span class="x"></span>
+<span class="x">&lt;!-- SNIP --&gt;</span>
+</pre></div>
+<p>What it does:</p>
+<ol class="arabic simple">
+<li>get a list of all languages as the main language (<tt class="docutils literal">main_lang</tt> exported by the <tt class="docutils literal">i18n_subsites</tt> plugin) and the subsites languages. The list filter is needed as <tt class="docutils literal">keys()</tt> does not return a list and the list concatenation (<tt class="docutils literal">+</tt>) would not work</li>
+<li>for each lang it makes link and makes it active if it is the <em>DEFAULT_LANG</em> of the currently rendered subsite</li>
+<li>gets the url for the (sub)site. If the lang is not ins <tt class="docutils literal">extra_siteurls*</tt>, it must be the current <em>DEFAULT_LANG</em>, so use the current <em>SITEURL</em></li>
+<li>looks up the language name</li>
+</ol>
 <p>You can see the result for yourself at the top of the page.</p>
 <table class="docutils footnote" frame="void" id="flags" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
@@ -73,6 +99,7 @@ By <a class="url fn" href="http://smartass101.github.io/pelican-plugins/author/s
 <tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td>Although it may look nice, <a class="reference external" href="http://www.w3.org/TR/i18n-html-tech-lang/#ri20040808.173208643">w3 discourages it</a>.</td></tr>
 </tbody>
 </table>
+</div>
                 </article>
             </aside><!-- /#featured -->
                 <section id="content" class="body">

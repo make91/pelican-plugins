@@ -42,6 +42,31 @@ You can use the &lt;a class="reference external" href="https://github.com/smarta
 &lt;span class="cp"&gt;{%&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="nv"&gt;title&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="nv"&gt;link&lt;/span&gt; &lt;span class="k"&gt;in&lt;/span&gt; &lt;span class="nv"&gt;MENUITEMS&lt;/span&gt; &lt;span class="cp"&gt;%}&lt;/span&gt;&lt;span class="x"&gt;&lt;/span&gt;
 &lt;span class="x"&gt;&amp;lt;!-- SNIP --&amp;gt;&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
+&lt;div class="section" id="different-design"&gt;
+&lt;h2&gt;Different design&lt;/h2&gt;
+&lt;p&gt;Later I decided that I want to show the active language in the navbar too
+.
+So, I needed a list of all the languages the site supports, so I used the &lt;em&gt;I18N_SUBSITES&lt;/em&gt; dictionary as it is available in templates (because it is an all-caps config setting) and extracted the list of languages as &lt;tt class="docutils literal"&gt;I18N_SUBSITES.keys()&lt;/tt&gt;.&lt;/p&gt;
+&lt;p&gt;Here is the slightly modified template&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="x"&gt;&amp;lt;!-- SNIP --&amp;gt;&lt;/span&gt;
+&lt;span class="x"&gt;&amp;lt;nav&amp;gt;&amp;lt;ul&amp;gt;&lt;/span&gt;
+&lt;span class="cp"&gt;{%&lt;/span&gt; &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="nv"&gt;extra_siteurls&lt;/span&gt; &lt;span class="k"&gt;and&lt;/span&gt; &lt;span class="nv"&gt;I18N_SUBSITES&lt;/span&gt; &lt;span class="cp"&gt;%}&lt;/span&gt;&lt;span class="x"&gt;&lt;/span&gt;
+&lt;span class="cp"&gt;{%&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="nv"&gt;lang&lt;/span&gt; &lt;span class="k"&gt;in&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="nv"&gt;main_lang&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;I18N_SUBSITES.keys&lt;/span&gt;&lt;span class="o"&gt;()&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="nf"&gt;list&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="cp"&gt;%}&lt;/span&gt;&lt;span class="x"&gt;&lt;/span&gt;
+&lt;span class="x"&gt;&amp;lt;li&lt;/span&gt;&lt;span class="cp"&gt;{%&lt;/span&gt; &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="nv"&gt;lang&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="nv"&gt;DEFAULT_LANG&lt;/span&gt; &lt;span class="cp"&gt;%}&lt;/span&gt;&lt;span class="x"&gt; class=&amp;quot;active&amp;quot;&lt;/span&gt;&lt;span class="cp"&gt;{%&lt;/span&gt; &lt;span class="k"&gt;endif&lt;/span&gt; &lt;span class="cp"&gt;%}&lt;/span&gt;&lt;span class="x"&gt;&amp;gt;&amp;lt;a href=&amp;quot;&lt;/span&gt;&lt;span class="cp"&gt;{{&lt;/span&gt; &lt;span class="nv"&gt;extra_siteurls.get&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;lang&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="nv"&gt;SITEURL&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="cp"&gt;}}&lt;/span&gt;&lt;span class="x"&gt;&amp;quot;&amp;gt;&lt;/span&gt;&lt;span class="cp"&gt;{{&lt;/span&gt; &lt;span class="nv"&gt;lang&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="nf"&gt;lookup_lang_name&lt;/span&gt; &lt;span class="cp"&gt;}}&lt;/span&gt;&lt;span class="x"&gt;&amp;lt;/a&amp;gt;&amp;lt;/li&amp;gt;&lt;/span&gt;
+&lt;span class="cp"&gt;{%&lt;/span&gt; &lt;span class="k"&gt;endfor&lt;/span&gt; &lt;span class="cp"&gt;%}&lt;/span&gt;&lt;span class="x"&gt;&lt;/span&gt;
+&lt;span class="cp"&gt;{%&lt;/span&gt; &lt;span class="k"&gt;endif&lt;/span&gt; &lt;span class="cp"&gt;%}&lt;/span&gt;&lt;span class="x"&gt;&lt;/span&gt;
+&lt;span class="x"&gt;&amp;lt;!-- separator --&amp;gt;&lt;/span&gt;
+&lt;span class="x"&gt;&amp;lt;li style=&amp;quot;background-color: white; padding: 5px;&amp;quot;&amp;gt;&amp;amp;nbsp&amp;lt;/li&amp;gt;&lt;/span&gt;
+&lt;span class="cp"&gt;{%&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="nv"&gt;title&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="nv"&gt;link&lt;/span&gt; &lt;span class="k"&gt;in&lt;/span&gt; &lt;span class="nv"&gt;MENUITEMS&lt;/span&gt; &lt;span class="cp"&gt;%}&lt;/span&gt;&lt;span class="x"&gt;&lt;/span&gt;
+&lt;span class="x"&gt;&amp;lt;!-- SNIP --&amp;gt;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;What it does:&lt;/p&gt;
+&lt;ol class="arabic simple"&gt;
+&lt;li&gt;get a list of all languages as the main language (&lt;tt class="docutils literal"&gt;main_lang&lt;/tt&gt; exported by the &lt;tt class="docutils literal"&gt;i18n_subsites&lt;/tt&gt; plugin) and the subsites languages. The list filter is needed as &lt;tt class="docutils literal"&gt;keys()&lt;/tt&gt; does not return a list and the list concatenation (&lt;tt class="docutils literal"&gt;+&lt;/tt&gt;) would not work&lt;/li&gt;
+&lt;li&gt;for each lang it makes link and makes it active if it is the &lt;em&gt;DEFAULT_LANG&lt;/em&gt; of the currently rendered subsite&lt;/li&gt;
+&lt;li&gt;gets the url for the (sub)site. If the lang is not ins &lt;tt class="docutils literal"&gt;extra_siteurls*&lt;/tt&gt;, it must be the current &lt;em&gt;DEFAULT_LANG&lt;/em&gt;, so use the current &lt;em&gt;SITEURL&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;looks up the language name&lt;/li&gt;
+&lt;/ol&gt;
 &lt;p&gt;You can see the result for yourself at the top of the page.&lt;/p&gt;
 &lt;table class="docutils footnote" frame="void" id="flags" rules="none"&gt;
 &lt;colgroup&gt;&lt;col class="label" /&gt;&lt;col /&gt;&lt;/colgroup&gt;
@@ -49,6 +74,7 @@ You can use the &lt;a class="reference external" href="https://github.com/smarta
 &lt;tr&gt;&lt;td class="label"&gt;&lt;a class="fn-backref" href="#id1"&gt;[1]&lt;/a&gt;&lt;/td&gt;&lt;td&gt;Although it may look nice, &lt;a class="reference external" href="http://www.w3.org/TR/i18n-html-tech-lang/#ri20040808.173208643"&gt;w3 discourages it&lt;/a&gt;.&lt;/td&gt;&lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
+&lt;/div&gt;
 </summary></entry><entry><title>A translated article</title><link href="http://smartass101.github.io/pelican-plugins/translated-article.html" rel="alternate"></link><updated>2014-02-02T00:00:00+01:00</updated><author><name>smartass101</name></author><id>tag:smartass101.github.io,2014-02-02:pelican-plugins/translated-article.html</id><summary type="html">&lt;p&gt;This article has a translation, the translation link will take you to it.
 Notice that the translation can have a different tag, so even tags can be translated.&lt;/p&gt;
 </summary><category term="example"></category></entry><entry><title>Přeložený příspěvek</title><link href="http://smartass101.github.io/pelican-plugins/cz/translated-article.html" rel="alternate"></link><updated>2014-02-02T00:00:00+01:00</updated><author><name>smartass101</name></author><id>tag:smartass101.github.io,2014-02-02:pelican-plugins/cz/translated-article.html</id><summary type="html">&lt;p&gt;Tento příspěvek má překlad, klikni na odkaz na překlad. Všimni si, že štítek je také přeložen.&lt;/p&gt;
