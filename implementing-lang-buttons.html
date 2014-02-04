@@ -43,7 +43,7 @@ By <a class="url fn" href="http://smartass101.github.io/pelican-plugins/author/s
 
 </footer><!-- /.post-info -->      <p>Each article with translations has translations links, but that's the only way to switch between language subsites.</p>
 <p>I wanted to make it simple to switch between the language subsites on all pages, so I decided to add language buttons to the top menu bar.</p>
-<p>For this purpose I used the <tt class="docutils literal">extra_siteurls</tt> dictionary exported by the <tt class="docutils literal">i18n_subsites</tt> plugin into the template context. This dictionary mapps the language code to the SITEURL of the respective subsite. But I wanted the language button to show the names of the language codes, not just the language codes.</p>
+<p>For this purpose I used the <tt class="docutils literal">extra_siteurls</tt> dictionary exported by the <tt class="docutils literal">i18n_subsites</tt> plugin into the template context. This dictionary maps the language code to the SITEURL of the respective subsite. But I wanted the language button to show the names of the language codes, not just the language codes.</p>
 <p>Perhaps I should have added support for putting the names in <tt class="docutils literal">I18N_SUBSITES</tt> and exporting the names in <tt class="docutils literal">extra_siteurls</tt> too? No, I want to keep the <tt class="docutils literal">i18n_subsites</tt> plugin as simple as possible and let people add features onto it. IMHO that is better than making many assumptions about what people may want, because you cannot please everyone, e.g. somebody would rather put there flags <a class="footnote-reference" href="#flags" id="id1">[1]</a>.</p>
 <p>So, the (IMHO) simplest way to support this is to make a simple jinja2 filter that translates the language code to the language name via a dictionary. Here is the relevant part of my pelicanconf.py</p>
 <div class="highlight"><pre><span class="n">languages_lookup</span> <span class="o">=</span> <span class="p">{</span>
@@ -51,7 +51,7 @@ By <a class="url fn" href="http://smartass101.github.io/pelican-plugins/author/s
              <span class="s">&#39;cz&#39;</span><span class="p">:</span> <span class="s">&#39;Čeština&#39;</span><span class="p">,</span>
              <span class="p">}</span>
 
-<span class="k">def</span> <span class="nf">loopkup_lang_name</span><span class="p">(</span><span class="n">lang_code</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">lookup_lang_name</span><span class="p">(</span><span class="n">lang_code</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">languages_lookup</span><span class="p">[</span><span class="n">lang_code</span><span class="p">]</span>
 
 <span class="n">JINJA_FILTERS</span> <span class="o">=</span> <span class="p">{</span>

@@ -1,3 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom"><title>smartass101ovy Pelican doplňky</title><link href="http://smartass101.github.io/pelican-plugins/cz/" rel="alternate"></link><link href="http://smartass101.github.io/pelican-plugins/feeds/i18n_subsites.atom.xml" rel="self"></link><id>http://smartass101.github.io/pelican-plugins/cz/</id><updated>2014-02-02T00:00:00+01:00</updated><entry><title>Přeložený příspěvek</title><link href="http://smartass101.github.io/pelican-plugins/cz/translated-article.html" rel="alternate"></link><updated>2014-02-02T00:00:00+01:00</updated><author><name>smartass101</name></author><id>tag:smartass101.github.io,2014-02-02:pelican-plugins/cz/translated-article.html</id><summary type="html">&lt;p&gt;Tento příspěvek má překlad, klikni na odkaz na překlad. Všimni si, že štítek je také přeložen.&lt;/p&gt;
-</summary><category term="příklad"></category></entry></feed>
+</summary><category term="příklad"></category></entry><entry><title>Pády a jinja2.ext.i18n</title><link href="http://smartass101.github.io/pelican-plugins/cz/pady-a-jinja2exti18n.html" rel="alternate"></link><updated>2014-02-01T00:00:00+01:00</updated><author><name>smartass101</name></author><id>tag:smartass101.github.io,2014-02-01:pelican-plugins/cz/pady-a-jinja2exti18n.html</id><summary type="html">&lt;p&gt;Podle všeho &lt;tt class="docutils literal"&gt;jinja2.ext.i18n&lt;/tt&gt; podporuje tzv. pluralizaci, ale různé pády?
+To byste asi nejdřív museli vysvětlit těm developerům &lt;tt class="docutils literal"&gt;gettext&lt;/tt&gt;, co to pád je.
+A stějne by vám nejspíš řekli, že na to kašlou, že by to mnohonásobně zesložitštilo kód.&lt;/p&gt;
+&lt;p&gt;No nic, prostě zatím je potřeba používat pádově neutrální řetězce.&lt;/p&gt;
+&lt;p&gt;Jestli jste tohle přečetli, tak jste našli jakoby easter egg :)
+Jo a vím, že ta diakritika v tomhle fontu vypadá fakt blbě, ale já chci, aby ten vzhled vypadal co nejvíc jako ten defaultní, aby bylo jasné, jak co přizpůsobit.&lt;/p&gt;
+&lt;p&gt;Mějte se, můžete mi poděkovat nebo vynadat na IRCéčku &lt;tt class="docutils literal"&gt;#pelican&lt;/tt&gt;.&lt;/p&gt;
+</summary></entry></feed>
