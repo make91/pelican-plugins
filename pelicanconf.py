@@ -10,7 +10,6 @@ PATH = 'content'
 
 TIMEZONE = 'Europe/Prague'
 
-DEFAULT_LANG = 'en'
 
 # Feed generation is usually not desired when developing
 FEED_ALL_ATOM = None
@@ -41,12 +40,28 @@ JINJA_EXTENSIONS = ['jinja2.ext.i18n']
 THEME = 'themes/notmyidea/'
 
 DEFAULT_LANG = "en"
+
+LOCALE = 'en_US'
+
 I18N_SUBSITES = {
         'cz': {
             'SITENAME': 'smartass101ovy Pelican doplňky',
+            'LOCALE': 'cs_CZ',
             },
         }
 
 DEFAULT_CATEGORY = 'i18n_subsites'
 
 OUTPUT_SOURCES = True
+
+languages_lookup = {
+    'en': 'English',
+    'cz': 'Čeština',
+    }
+
+def lookup_lang_name(lang_code):
+   return languages_lookup[lang_code]
+
+JINJA_FILTERS = {
+    'lookup_lang_name': lookup_lang_name,
+    }

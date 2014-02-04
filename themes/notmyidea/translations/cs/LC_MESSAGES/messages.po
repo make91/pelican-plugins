@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2014-02-02 20:26+0100\n"
-"PO-Revision-Date: 2014-02-01 21:38+0100\n"
+"POT-Creation-Date: 2014-02-04 11:13+0100\n"
+"PO-Revision-Date: 2014-02-04 11:13+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: cs <LL@li.org>\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
@@ -38,15 +38,15 @@ msgstr "V"
 msgid "get the pdf"
 msgstr "stáhnout pdf"
 
-#: templates/base.html:44
-msgid "blogroll"
+#: templates/base.html:52
+msgid "links"
 msgstr "odkazy"
 
-#: templates/base.html:54
+#: templates/base.html:62
 msgid "social"
 msgstr "sociální sítě"
 
-#: templates/base.html:73
+#: templates/base.html:81
 msgid ""
 "Proudly powered by <a href=\"http://getpelican.com/\">Pelican</a>, which "
 "takes great advantage of <a href=\"http://python.org\">Python</a>."
@@ -54,14 +54,19 @@ msgstr ""
 "S hrdostí poháněn enginem <a href=\"http://getpelican.com/\">Pelican</a>,"
 " který využívá <a href=\"http://python.org\">Python</a>."
 
-#: templates/base.html:74
+#: templates/base.html:82
 msgid ""
-"Sources for this site can be found in the <a href=\"http://github.com"
-"/\">gh-pages_source branch</a> of this plugin repository."
+"Sources for this site can be found in the <a "
+"href=\"https://github.com/smartass101/pelican-plugins/tree/gh-"
+"pages_source\">gh-pages_source branch</a> of this <a "
+"href=\"https://github.com/smartass101/pelican-plugins\">plugin "
+"repository<a/>."
 msgstr ""
-"Zdrojové kódy pro tyto stránky lze nalézt ve <a "
-"href=\"http://github.com/\">větvi gh-pages_source</a> tohoto repozitáře "
-"pluginů"
+"Zdrojové kódy pro tyto stránky lze nalézt v <a "
+"href=\"https://github.com/smartass101/pelican-plugins/tree/gh-"
+"pages_source\">gh-pages_source větvi</a> tohoto <a "
+"href=\"https://github.com/smartass101/pelican-plugins\">repozitáře "
+"doplňků<a/>."
 
 #: templates/index.html:20
 msgid "Other articles"
@@ -71,6 +76,14 @@ msgstr "Další články"
 msgid "read more"
 msgstr "číst více"
 
+#: templates/index.html:55
+msgid "Pages"
+msgstr "Stránky"
+
+#: templates/pagination.html:6
+msgid "Page"
+msgstr "Stránka"
+
 #: templates/taglist.html:1
 msgid "tags"
 msgstr "štítky"
@@ -78,7 +91,4 @@ msgstr "štítky"
 #: templates/translations.html:3
 msgid "Translations"
 msgstr "Překlady"
-
-#~ msgid "Hello World!"
-#~ msgstr "Ahoj světe!"
 

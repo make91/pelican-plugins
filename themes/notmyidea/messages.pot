@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2014-02-02 20:26+0100\n"
+"POT-Creation-Date: 2014-02-04 11:13+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -37,24 +37,27 @@ msgstr ""
 msgid "get the pdf"
 msgstr ""
 
-#: templates/base.html:44
-msgid "blogroll"
+#: templates/base.html:52
+msgid "links"
 msgstr ""
 
-#: templates/base.html:54
+#: templates/base.html:62
 msgid "social"
 msgstr ""
 
-#: templates/base.html:73
+#: templates/base.html:81
 msgid ""
 "Proudly powered by <a href=\"http://getpelican.com/\">Pelican</a>, which "
 "takes great advantage of <a href=\"http://python.org\">Python</a>."
 msgstr ""
 
-#: templates/base.html:74
+#: templates/base.html:82
 msgid ""
-"Sources for this site can be found in the <a href=\"http://github.com"
-"/\">gh-pages_source branch</a> of this plugin repository."
+"Sources for this site can be found in the <a "
+"href=\"https://github.com/smartass101/pelican-plugins/tree/gh-"
+"pages_source\">gh-pages_source branch</a> of this <a "
+"href=\"https://github.com/smartass101/pelican-plugins\">plugin "
+"repository<a/>."
 msgstr ""
 
 #: templates/index.html:20
@@ -63,6 +66,14 @@ msgstr ""
 
 #: templates/index.html:39
 msgid "read more"
+msgstr ""
+
+#: templates/index.html:55
+msgid "Pages"
+msgstr ""
+
+#: templates/pagination.html:6
+msgid "Page"
 msgstr ""
 
 #: templates/taglist.html:1

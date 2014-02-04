@@ -3,6 +3,7 @@ i18n_subsites plugin released
 -----------------------------
 :date: 2014-02-05
 :author: Ondřej Grover
+:lang: en
 
 Pelican supports article and page translations `since version 2.6 <https://github.com/getpelican/pelican/blob/master/docs/changelog.rst#26-2011-03-08>`_.
 However, this functionality does not include translations of themes or the site name, something many have asked for.
@@ -20,4 +21,4 @@ You can use the `sources for the site <https://github.com/smartass101/pelican-pl
 
 Althoug this plugin has been tested, it is quite possible that you will find some bugs or incovenient behavior as it is very new. Do not hesitate to file an issue!
 
-Finally, I would like to thank the Pelican developers for implementing and designing Pelican so well, that making this plugin was straightforward, fast and fun.
+Finally, I would like to thank the Pelican developers for implementing and designing Pelican so well that making this plugin was straightforward, fast and fun.

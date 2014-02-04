@@ -52,7 +52,7 @@
     {% endfor %}
 {% else %}
 <section id="content" class="body">
-<h2>Pages</h2>
+<h2>{% trans %}Pages{% endtrans %}</h2>
     {% for page in PAGES %}
         <li><a href="{{ SITEURL }}/{{ page.url }}">{{ page.title }}</a></li>
     {% endfor %}

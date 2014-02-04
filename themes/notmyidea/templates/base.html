@@ -21,6 +21,13 @@
         <header id="banner" class="body">
                 <h1><a href="{{ SITEURL }}/">{{ SITENAME }} {% if SITESUBTITLE %} <strong>{{ SITESUBTITLE }}</strong>{% endif %}</a></h1>
                 <nav><ul>
+		{% if extra_siteurls %}
+		{% for lang, url in extra_siteurls.items() %}
+		    <li><a href="{{ url }}">{{ lang | lookup_lang_name }}</a></li>
+		{% endfor %}
+		{% endif %}
+		    <!-- separator -->
+		    <li style="background-color: white; padding: 5px;">&nbsp</li>
                 {% for title, link in MENUITEMS %}
                     <li><a href="{{ link }}">{{ title }}</a></li>
                 {% endfor %}
@@ -34,14 +41,15 @@
                     <li{% if cat == category %} class="active"{% endif %}><a href="{{ SITEURL }}/{{ cat.url }}">{{ cat }}</a></li>
                 {% endfor %}
                 {% endif %}
-                </ul></nav>
+                </ul>
+		</nav>		
         </header><!-- /#banner -->
         {% block content %}
         {% endblock %}
         <section id="extras" class="body">
         {% if LINKS %}
                 <div class="blogroll">
-                    <h2>{% trans %}blogroll{% endtrans %}</h2>
+                    <h2>{% trans %}links{% endtrans %}</h2>
                         <ul>
                         {% for name, link in LINKS %}
                             <li><a href="{{ link }}">{{ name }}</a></li>
@@ -71,7 +79,7 @@
         <footer id="contentinfo" class="body">
                 <address id="about" class="vcard body">
                     {% trans %}Proudly powered by <a href="http://getpelican.com/">Pelican</a>, which takes great advantage of <a href="http://python.org">Python</a>.{% endtrans %}</br>
-                {% trans %}Sources for this site can be found in the <a href="http://github.com/">gh-pages_source branch</a> of this plugin repository.{% endtrans %}
+                {% trans %}Sources for this site can be found in the <a href="https://github.com/smartass101/pelican-plugins/tree/gh-pages_source">gh-pages_source branch</a> of this <a href="https://github.com/smartass101/pelican-plugins">plugin repository<a/>.{% endtrans %}
                 </address><!-- /#about -->
         </footer><!-- /#contentinfo -->
 
