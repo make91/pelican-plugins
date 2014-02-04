@@ -75,7 +75,12 @@ So, I needed a list of all the languages the site supports, so I used the &lt;em
 &lt;/tbody&gt;
 &lt;/table&gt;
 &lt;/div&gt;
-</summary></entry><entry><title>A translated article</title><link href="http://smartass101.github.io/pelican-plugins/translated-article.html" rel="alternate"></link><updated>2014-02-02T00:00:00+01:00</updated><author><name>smartass101</name></author><id>tag:smartass101.github.io,2014-02-02:pelican-plugins/translated-article.html</id><summary type="html">&lt;p&gt;This article has a translation, the translation link will take you to it.
-Notice that the translation can have a different tag, so even tags can be translated.&lt;/p&gt;
+</summary></entry><entry><title>A translated article</title><link href="http://smartass101.github.io/pelican-plugins/translated-article.html" rel="alternate"></link><updated>2014-02-02T00:00:00+01:00</updated><author><name>smartass101</name></author><id>tag:smartass101.github.io,2014-02-02:pelican-plugins/translated-article.html</id><summary type="html">&lt;p&gt;This article has a translation, the translation link will take you to it.&lt;/p&gt;
+&lt;p&gt;Notice that the translation can have a different tag, so even tags can be translated.&lt;/p&gt;
+&lt;p&gt;As described in the &lt;a class="reference external" href="http://docs.getpelican.com/en/3.3.0/getting_started.html#translations"&gt;Pelican translations documentation&lt;/a&gt;, an article is considered a translation of a different article if&lt;/p&gt;
+&lt;ol class="arabic simple"&gt;
+&lt;li&gt;it has the same &lt;tt class="docutils literal"&gt;slug&lt;/tt&gt; metadata&lt;/li&gt;
+&lt;li&gt;has a different &lt;tt class="docutils literal"&gt;lang&lt;/tt&gt; metadata&lt;/li&gt;
+&lt;/ol&gt;
 </summary><category term="example"></category></entry><entry><title>An untranslated article</title><link href="http://smartass101.github.io/pelican-plugins/untranslated-article.html" rel="alternate"></link><updated>2014-02-01T00:00:00+01:00</updated><author><name>smartass101</name></author><id>tag:smartass101.github.io,2014-02-01:pelican-plugins/untranslated-article.html</id><summary type="html">&lt;p&gt;This article has no translation, so you will find it as a &lt;a class="reference external" href="cz/drafts/untranslated-article.html"&gt;draft&lt;/a&gt; in the Czech subsite, because I have &lt;tt class="docutils literal"&gt;I18N_HIDE_UNTRANSLATED_CONTENT&lt;/tt&gt; as True (the default).&lt;/p&gt;
 </summary><category term="example"></category></entry></feed>
