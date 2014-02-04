@@ -9,7 +9,7 @@ Each article with translations has translations links, but that's the only way t
 
 I wanted to make it simple to switch between the language subsites on all pages, so I decided to add language buttons to the top menu bar.
 
-For this purpose I used the ``extra_siteurls`` dictionary exported by the ``i18n_subsites`` plugin into the template context. This dictionary mapps the language code to the SITEURL of the respective subsite. But I wanted the language button to show the names of the language codes, not just the language codes.
+For this purpose I used the ``extra_siteurls`` dictionary exported by the ``i18n_subsites`` plugin into the template context. This dictionary maps the language code to the SITEURL of the respective subsite. But I wanted the language button to show the names of the language codes, not just the language codes.
 
 Perhaps I should have added support for putting the names in ``I18N_SUBSITES`` and exporting the names in ``extra_siteurls`` too? No, I want to keep the ``i18n_subsites`` plugin as simple as possible and let people add features onto it. IMHO that is better than making many assumptions about what people may want, because you cannot please everyone, e.g. somebody would rather put there flags [#flags]_.
 
@@ -22,7 +22,7 @@ So, the (IMHO) simplest way to support this is to make a simple jinja2 filter th
 		'cz': 'Čeština',
 		}
 
-   def loopkup_lang_name(lang_code):
+   def lookup_lang_name(lang_code):
        return languages_lookup[lang_code]
 
    JINJA_FILTERS = {
