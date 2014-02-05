@@ -44,7 +44,7 @@ Od <a class="url fn" href="http://smartass101.github.io/pelican-plugins/cz/autho
 
 </footer><!-- /.post-info -->      <p>Each article with translations has translations links, but that's the only way to switch between language subsites.</p>
 <p>I wanted to make it simple to switch between the language subsites on all pages, so I decided to add language buttons to the top menu bar.</p>
-<p>For this purpose I used the <tt class="docutils literal">extra_siteurls</tt> dictionary exported by the <tt class="docutils literal">i18n_subsites</tt> plugin into the template context. This dictionary maps the language code to the SITEURL of the respective subsite. But I wanted the language button to show the names of the language codes, not just the language codes.</p>
+<p>For this purpose I used the <tt class="docutils literal">extra_siteurls</tt> dictionary exported by the <tt class="docutils literal">i18n_subsites</tt> plugin into the template context. This dictionary maps the language code to the SITEURL of the respective subsite. But I wanted the language button to show the names of the languages, not just the language codes.</p>
 <p>Perhaps I should have added support for putting the names in <tt class="docutils literal">I18N_SUBSITES</tt> and exporting the names in <tt class="docutils literal">extra_siteurls</tt> too? No, I want to keep the <tt class="docutils literal">i18n_subsites</tt> plugin as simple as possible and let people add features onto it. IMHO that is better than making many assumptions about what people may want, because you cannot please everyone, e.g. somebody would rather put there flags <a class="footnote-reference" href="#flags" id="id1">[1]</a>.</p>
 <p>So, the (IMHO) simplest way to support this is to make a simple jinja2 filter that translates the language code to the language name via a dictionary. Here is the relevant part of my pelicanconf.py</p>
 <div class="highlight"><pre><span class="n">languages_lookup</span> <span class="o">=</span> <span class="p">{</span>
@@ -94,7 +94,7 @@ So, I needed a list of all the languages the site supports, so I used the <em>I1
 <ol class="arabic simple">
 <li>get a list of all languages as the main language (<tt class="docutils literal">main_lang</tt> exported by the <tt class="docutils literal">i18n_subsites</tt> plugin) and the subsites languages. The list filter is needed as <tt class="docutils literal">keys()</tt> does not return a list and the list concatenation (<tt class="docutils literal">+</tt>) would not work</li>
 <li>for each lang it makes link and makes it active if it is the <em>DEFAULT_LANG</em> of the currently rendered subsite</li>
-<li>gets the url for the (sub)site. If the lang is not ins <tt class="docutils literal">extra_siteurls*</tt>, it must be the current <em>DEFAULT_LANG</em>, so use the current <em>SITEURL</em></li>
+<li>gets the url for the (sub)site. If the lang is not in <tt class="docutils literal">extra_siteurls</tt>, it must be the current <em>DEFAULT_LANG</em>, so use the current <em>SITEURL</em></li>
 <li>looks up the language name</li>
 </ol>
 <p>You can see the result for yourself at the top of the page.</p>

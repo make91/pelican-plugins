@@ -9,7 +9,7 @@ Each article with translations has translations links, but that's the only way t
 
 I wanted to make it simple to switch between the language subsites on all pages, so I decided to add language buttons to the top menu bar.
 
-For this purpose I used the ``extra_siteurls`` dictionary exported by the ``i18n_subsites`` plugin into the template context. This dictionary maps the language code to the SITEURL of the respective subsite. But I wanted the language button to show the names of the language codes, not just the language codes.
+For this purpose I used the ``extra_siteurls`` dictionary exported by the ``i18n_subsites`` plugin into the template context. This dictionary maps the language code to the SITEURL of the respective subsite. But I wanted the language button to show the names of the languages, not just the language codes.
 
 Perhaps I should have added support for putting the names in ``I18N_SUBSITES`` and exporting the names in ``extra_siteurls`` too? No, I want to keep the ``i18n_subsites`` plugin as simple as possible and let people add features onto it. IMHO that is better than making many assumptions about what people may want, because you cannot please everyone, e.g. somebody would rather put there flags [#flags]_.
 
@@ -73,7 +73,7 @@ What it does:
 
 1. get a list of all languages as the main language (``main_lang`` exported by the ``i18n_subsites`` plugin) and the subsites languages. The list filter is needed as ``keys()`` does not return a list and the list concatenation (``+``) would not work
 2. for each lang it makes link and makes it active if it is the *DEFAULT_LANG* of the currently rendered subsite
-3. gets the url for the (sub)site. If the lang is not ins ``extra_siteurls*``, it must be the current *DEFAULT_LANG*, so use the current *SITEURL*
+3. gets the url for the (sub)site. If the lang is not in ``extra_siteurls``, it must be the current *DEFAULT_LANG*, so use the current *SITEURL*
 4. looks up the language name
 
 You can see the result for yourself at the top of the page.
