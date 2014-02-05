@@ -21,9 +21,9 @@
         <header id="banner" class="body">
                 <h1><a href="{{ SITEURL }}/">{{ SITENAME }} {% if SITESUBTITLE %} <strong>{{ SITESUBTITLE }}</strong>{% endif %}</a></h1>
                 <nav><ul>
-		{% if extra_siteurls and I18N_SUBSITES %}
-		{% for lang in [main_lang] + (I18N_SUBSITES.keys() | list) %}
-		    <li{% if lang == DEFAULT_LANG %} class="active"{% endif %}><a href="{{ extra_siteurls.get(lang, SITEURL) }}">{{ lang | lookup_lang_name }}</a></li>
+		{% if lang_siteurls %}
+		{% for lang, siteurl in lang_siteurls.items() %}
+		    <li{% if lang == DEFAULT_LANG %} class="active"{% endif %}><a href="{{ siteurl }}">{{ lang | lookup_lang_name }}</a></li>
 		{% endfor %}
 		    <!-- separator -->
 		    <li style="background-color: white; padding: 5px;">&nbsp</li>

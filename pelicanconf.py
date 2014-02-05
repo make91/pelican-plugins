@@ -44,7 +44,7 @@ DEFAULT_LANG = "en"
 LOCALE = 'en_US'
 
 I18N_SUBSITES = {
-        'cz': {
+        'cz': { 
             'SITENAME': 'smartass101ovy Pelican doplňky',
             'LOCALE': 'cs_CZ',            #This is somewhat redundant with DATE_FORMATS, but IMHO more convenient
             },
@@ -61,10 +61,19 @@ languages_lookup = {
     }
 
 def lookup_lang_name(lang_code):
-   return languages_lookup[lang_code]
+    return languages_lookup[lang_code]
+
+
+def my_ordered_items(dict):
+    items = list(dict.items())
+    # swap first and last using tuple unpacking
+    items[0], items[-1] = items[-1], items[0]
+    return items
+
 
 JINJA_FILTERS = {
     'lookup_lang_name': lookup_lang_name,
+    'my_ordered_items': my_ordered_items,
     }
 
 STATIC_PATHS = ['images', 'files']
