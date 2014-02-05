@@ -80,4 +80,51 @@ You can see the result for yourself at the top of the page.
 
 Now that I look at the above snippet, I'm not sure if ``extra_siteurls`` is that convenient. Perhaps something like ``lang_siteurls`` dictionary for all languages would have been more convenient. Anyways, all the information is available in the context at the moment, if it bugs you too much, contact me and I'll improve it.
 
+Update: added ``lang_siteurls`` for convenience' sake
+-----------------------------------------------------
+
+I decided that I want to make things as easy as possible for the user, so I implemented ``lang_siteurls``. 
+
+So now I use this in my template
+
+.. code-block:: jinja
+
+   <!-- SNIP -->
+   <nav><ul>
+   {% if lang_siteurls %}
+   {% for lang, siteurl in lang_siteurls.items() %}
+   <li{% if lang == DEFAULT_LANG %} class="active"{% endif %}><a href="{{ siteurl }}">{{ lang | lookup_lang_name }}</a></li>
+   {% endfor %}
+   <!-- separator -->
+   <li style="background-color: white; padding: 5px;">&nbsp</li>
+   {% endif %}
+   {% for title, link in MENUITEMS %}
+   <!-- SNIP -->
+
+Much nicer, don't you think? ;)
+
+I also implemented ``lang_siteurls`` and ``extra_siteurls`` as an ``OrderedDict`` so that ``main_lang`` is always first. This also means that you can change the ordering of the dict through some jinja filter function like this in your config
+
+.. code-block:: python
+
+   def my_ordered_items(ordered_dict):
+       items = list(ordered_dict.items())
+       # swap first and last using tuple unpacking
+       items[0], items[-1] = items[-1], items[0]
+       return items
+
+   JINJA_FILTERS = {
+		...
+		'my_ordered_items': my_ordered_items,
+		}
+
+And then the ``for`` loop line in the template becomes
+
+.. code-block:: jinja
+
+   <!-- SNIP -->
+   {% for lang, siteurl in lang_siteurls | my_ordered_items %}
+   <!-- SNIP -->
+
+
 .. [#flags] Although it may look nice, `w3 discourages it <http://www.w3.org/TR/i18n-html-tech-lang/#ri20040808.173208643>`_.

@@ -99,6 +99,41 @@ So, I needed a list of all the languages the site supports, so I used the <em>I1
 </ol>
 <p>You can see the result for yourself at the top of the page.</p>
 <p>Now that I look at the above snippet, I'm not sure if <tt class="docutils literal">extra_siteurls</tt> is that convenient. Perhaps something like <tt class="docutils literal">lang_siteurls</tt> dictionary for all languages would have been more convenient. Anyways, all the information is available in the context at the moment, if it bugs you too much, contact me and I'll improve it.</p>
+</div>
+<div class="section" id="update-added-lang-siteurls-for-convenience-sake">
+<h2>Update: added <tt class="docutils literal">lang_siteurls</tt> for convenience' sake</h2>
+<p>I decided that I want to make things as easy as possible for the user, so I implemented <tt class="docutils literal">lang_siteurls</tt>.</p>
+<p>So now I use this in my template</p>
+<div class="highlight"><pre><span class="x">&lt;!-- SNIP --&gt;</span>
+<span class="x">&lt;nav&gt;&lt;ul&gt;</span>
+<span class="cp">{%</span> <span class="k">if</span> <span class="nv">lang_siteurls</span> <span class="cp">%}</span><span class="x"></span>
+<span class="cp">{%</span> <span class="k">for</span> <span class="nv">lang</span><span class="o">,</span> <span class="nv">siteurl</span> <span class="k">in</span> <span class="nv">lang_siteurls.items</span><span class="o">()</span> <span class="cp">%}</span><span class="x"></span>
+<span class="x">&lt;li</span><span class="cp">{%</span> <span class="k">if</span> <span class="nv">lang</span> <span class="o">==</span> <span class="nv">DEFAULT_LANG</span> <span class="cp">%}</span><span class="x"> class=&quot;active&quot;</span><span class="cp">{%</span> <span class="k">endif</span> <span class="cp">%}</span><span class="x">&gt;&lt;a href=&quot;</span><span class="cp">{{</span> <span class="nv">siteurl</span> <span class="cp">}}</span><span class="x">&quot;&gt;</span><span class="cp">{{</span> <span class="nv">lang</span> <span class="o">|</span> <span class="nf">lookup_lang_name</span> <span class="cp">}}</span><span class="x">&lt;/a&gt;&lt;/li&gt;</span>
+<span class="cp">{%</span> <span class="k">endfor</span> <span class="cp">%}</span><span class="x"></span>
+<span class="x">&lt;!-- separator --&gt;</span>
+<span class="x">&lt;li style=&quot;background-color: white; padding: 5px;&quot;&gt;&amp;nbsp&lt;/li&gt;</span>
+<span class="cp">{%</span> <span class="k">endif</span> <span class="cp">%}</span><span class="x"></span>
+<span class="cp">{%</span> <span class="k">for</span> <span class="nv">title</span><span class="o">,</span> <span class="nv">link</span> <span class="k">in</span> <span class="nv">MENUITEMS</span> <span class="cp">%}</span><span class="x"></span>
+<span class="x">&lt;!-- SNIP --&gt;</span>
+</pre></div>
+<p>Much nicer, don't you think? ;)</p>
+<p>I also implemented <tt class="docutils literal">lang_siteurls</tt> and <tt class="docutils literal">extra_siteurls</tt> as an <tt class="docutils literal">OrderedDict</tt> so that <tt class="docutils literal">main_lang</tt> is always first. This also means that you can change the ordering of the dict through some jinja filter function like this in your config</p>
+<div class="highlight"><pre><span class="k">def</span> <span class="nf">my_ordered_items</span><span class="p">(</span><span class="n">ordered_dict</span><span class="p">):</span>
+    <span class="n">items</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">ordered_dict</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+    <span class="c"># swap first and last using tuple unpacking</span>
+    <span class="n">items</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">items</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">items</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">items</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">items</span>
+
+<span class="n">JINJA_FILTERS</span> <span class="o">=</span> <span class="p">{</span>
+             <span class="o">...</span>
+             <span class="s">&#39;my_ordered_items&#39;</span><span class="p">:</span> <span class="n">my_ordered_items</span><span class="p">,</span>
+             <span class="p">}</span>
+</pre></div>
+<p>And then the <tt class="docutils literal">for</tt> loop line in the template becomes</p>
+<div class="highlight"><pre><span class="x">&lt;!-- SNIP --&gt;</span>
+<span class="cp">{%</span> <span class="k">for</span> <span class="nv">lang</span><span class="o">,</span> <span class="nv">siteurl</span> <span class="k">in</span> <span class="nv">lang_siteurls</span> <span class="o">|</span> <span class="nf">my_ordered_items</span> <span class="cp">%}</span><span class="x"></span>
+<span class="x">&lt;!-- SNIP --&gt;</span>
+</pre></div>
 <table class="docutils footnote" frame="void" id="flags" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
