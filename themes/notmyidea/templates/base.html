@@ -25,9 +25,9 @@
 		{% for lang in [main_lang] + (I18N_SUBSITES.keys() | list) %}
 		    <li{% if lang == DEFAULT_LANG %} class="active"{% endif %}><a href="{{ extra_siteurls.get(lang, SITEURL) }}">{{ lang | lookup_lang_name }}</a></li>
 		{% endfor %}
-		{% endif %}
 		    <!-- separator -->
 		    <li style="background-color: white; padding: 5px;">&nbsp</li>
+		{% endif %}
                 {% for title, link in MENUITEMS %}
                     <li><a href="{{ link }}">{{ title }}</a></li>
                 {% endfor %}
