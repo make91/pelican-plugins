@@ -39,9 +39,9 @@ Now it's just a matter of using the filter in the ``base.html`` template at the 
    {% for lang, url in extra_siteurls.items() %}
    <li><a href="{{ url }}">{{ lang | lookup_lang_name }}</a></li>
    {% endfor %}
-   {% endif %}
    <!-- separator -->
    <li style="background-color: white; padding: 5px;">&nbsp</li>
+   {% endif %}
    {% for title, link in MENUITEMS %}
    <!-- SNIP -->
 
@@ -63,9 +63,9 @@ Here is the slightly modified template
    {% for lang in [main_lang] + (I18N_SUBSITES.keys() | list) %}
    <li{% if lang == DEFAULT_LANG %} class="active"{% endif %}><a href="{{ extra_siteurls.get(lang, SITEURL) }}">{{ lang | lookup_lang_name }}</a></li>
    {% endfor %}
-   {% endif %}
    <!-- separator -->
    <li style="background-color: white; padding: 5px;">&nbsp</li>
+   {% endif %}
    {% for title, link in MENUITEMS %}
    <!-- SNIP -->
 
@@ -77,5 +77,7 @@ What it does:
 4. looks up the language name
 
 You can see the result for yourself at the top of the page.
+
+Now that I look at the above snippet, I'm not sure if ``extra_siteurls`` is that convenient. Perhaps something like ``lang_siteurls`` dictionary for all languages would have been more convenient. Anyways, all the information is available in the context at the moment, if it bugs you too much, contact me and I'll improve it.
 
 .. [#flags] Although it may look nice, `w3 discourages it <http://www.w3.org/TR/i18n-html-tech-lang/#ri20040808.173208643>`_.

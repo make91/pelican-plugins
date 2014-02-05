@@ -61,9 +61,9 @@ By <a class="url fn" href="http://smartass101.github.io/pelican-plugins/author/s
 <span class="cp">{%</span> <span class="k">for</span> <span class="nv">lang</span><span class="o">,</span> <span class="nv">url</span> <span class="k">in</span> <span class="nv">extra_siteurls.items</span><span class="o">()</span> <span class="cp">%}</span><span class="x"></span>
 <span class="x">&lt;li&gt;&lt;a href=&quot;</span><span class="cp">{{</span> <span class="nv">url</span> <span class="cp">}}</span><span class="x">&quot;&gt;</span><span class="cp">{{</span> <span class="nv">lang</span> <span class="o">|</span> <span class="nf">lookup_lang_name</span> <span class="cp">}}</span><span class="x">&lt;/a&gt;&lt;/li&gt;</span>
 <span class="cp">{%</span> <span class="k">endfor</span> <span class="cp">%}</span><span class="x"></span>
-<span class="cp">{%</span> <span class="k">endif</span> <span class="cp">%}</span><span class="x"></span>
 <span class="x">&lt;!-- separator --&gt;</span>
 <span class="x">&lt;li style=&quot;background-color: white; padding: 5px;&quot;&gt;&amp;nbsp&lt;/li&gt;</span>
+<span class="cp">{%</span> <span class="k">endif</span> <span class="cp">%}</span><span class="x"></span>
 <span class="cp">{%</span> <span class="k">for</span> <span class="nv">title</span><span class="o">,</span> <span class="nv">link</span> <span class="k">in</span> <span class="nv">MENUITEMS</span> <span class="cp">%}</span><span class="x"></span>
 <span class="x">&lt;!-- SNIP --&gt;</span>
 </pre></div>
@@ -79,9 +79,9 @@ So, I needed a list of all the languages the site supports, so I used the <em>I1
 <span class="cp">{%</span> <span class="k">for</span> <span class="nv">lang</span> <span class="k">in</span> <span class="o">[</span><span class="nv">main_lang</span><span class="o">]</span> <span class="o">+</span> <span class="o">(</span><span class="nv">I18N_SUBSITES.keys</span><span class="o">()</span> <span class="o">|</span> <span class="nf">list</span><span class="o">)</span> <span class="cp">%}</span><span class="x"></span>
 <span class="x">&lt;li</span><span class="cp">{%</span> <span class="k">if</span> <span class="nv">lang</span> <span class="o">==</span> <span class="nv">DEFAULT_LANG</span> <span class="cp">%}</span><span class="x"> class=&quot;active&quot;</span><span class="cp">{%</span> <span class="k">endif</span> <span class="cp">%}</span><span class="x">&gt;&lt;a href=&quot;</span><span class="cp">{{</span> <span class="nv">extra_siteurls.get</span><span class="o">(</span><span class="nv">lang</span><span class="o">,</span> <span class="nv">SITEURL</span><span class="o">)</span> <span class="cp">}}</span><span class="x">&quot;&gt;</span><span class="cp">{{</span> <span class="nv">lang</span> <span class="o">|</span> <span class="nf">lookup_lang_name</span> <span class="cp">}}</span><span class="x">&lt;/a&gt;&lt;/li&gt;</span>
 <span class="cp">{%</span> <span class="k">endfor</span> <span class="cp">%}</span><span class="x"></span>
-<span class="cp">{%</span> <span class="k">endif</span> <span class="cp">%}</span><span class="x"></span>
 <span class="x">&lt;!-- separator --&gt;</span>
 <span class="x">&lt;li style=&quot;background-color: white; padding: 5px;&quot;&gt;&amp;nbsp&lt;/li&gt;</span>
+<span class="cp">{%</span> <span class="k">endif</span> <span class="cp">%}</span><span class="x"></span>
 <span class="cp">{%</span> <span class="k">for</span> <span class="nv">title</span><span class="o">,</span> <span class="nv">link</span> <span class="k">in</span> <span class="nv">MENUITEMS</span> <span class="cp">%}</span><span class="x"></span>
 <span class="x">&lt;!-- SNIP --&gt;</span>
 </pre></div>
@@ -93,6 +93,7 @@ So, I needed a list of all the languages the site supports, so I used the <em>I1
 <li>looks up the language name</li>
 </ol>
 <p>You can see the result for yourself at the top of the page.</p>
+<p>Now that I look at the above snippet, I'm not sure if <tt class="docutils literal">extra_siteurls</tt> is that convenient. Perhaps something like <tt class="docutils literal">lang_siteurls</tt> dictionary for all languages would have been more convenient. Anyways, all the information is available in the context at the moment, if it bugs you too much, contact me and I'll improve it.</p>
 <table class="docutils footnote" frame="void" id="flags" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
