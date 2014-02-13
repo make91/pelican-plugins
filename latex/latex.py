@@ -21,7 +21,7 @@ from pelican.readers import HTMLReader
 
 # configuration file for tex4ht that implements metadata TeX macros
 # which are translated to meta fields for the HTMLReader
-tex4ht_cfg = os.path.join(os.path.basename(os.path.abspath(__name__)), 'pelican_tex4ht')
+tex4ht_cfg = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'pelican_tex4ht')
 
 
 class Tex4htReader(HTMLReader):
@@ -36,7 +36,7 @@ class Tex4htReader(HTMLReader):
     def read(self, filename):
         """Let tex4ht create a HTML file and then parse it"""
         temp_dir = mkdtemp()
-        process = sp.Popen(['mk4ht', 'htlatex', filename,
+        process = sp.Popen(['mk4ht', 'htlatex', os.path.abspath(filename),
                             tex4ht_cfg + ',mathml,-css,NoFonts,charset=utf8',
                             '-cunihtf -utf8',
                             ],
@@ -46,7 +46,7 @@ class Tex4htReader(HTMLReader):
             )
         process.wait()
 
-        html_output = os.path.join(temp_dir, filename.replace('.tex', '.html'))
+        html_output = os.path.join(temp_dir, os.path.basename(filename.replace('.tex', '.html')))
         content, metadata = super(Tex4htReader, self).read(html_output)  # parse the HTML
         
         # clean up
