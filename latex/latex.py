@@ -38,7 +38,7 @@ class Tex4htReader(HTMLReader):
         temp_dir = mkdtemp()
         process = sp.Popen(['mk4ht', 'htlatex', filename,
                             tex4ht_cfg + ',mathml,-css,NoFonts,charset=utf8',
-                            '-utf8',
+                            '-cunihtf -utf8',
                             ],
                             stdout=sp.DEVNULL,
                             stderr=sp.DEVNULL,
