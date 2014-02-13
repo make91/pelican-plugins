@@ -46,7 +46,7 @@ class Tex4htReader(HTMLReader):
             )
         process.wait()
 
-        html_output = os.path.join(temp_dir, os.path.basename(filename.replace('.tex', '.html')))
+        html_output = os.path.join(temp_dir, os.path.basename(filename).replace('.tex', '.html'))
         content, metadata = super(Tex4htReader, self).read(html_output)  # parse the HTML
         
         # clean up
