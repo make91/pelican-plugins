@@ -34,6 +34,9 @@ between the `<head>` parameters (for the NotMyIdea template, this file is base.h
         {{ page.latex }}
     {% endif %}
 
+This plugin also installes the `Tex4htReader` which can read most (La)TeX files
+and translates them to HTML which is then read by the standard `HTMLReader`
+
 Usage
 -----
 Latex will be embedded in every article. If however you want latex only for
@@ -48,6 +51,23 @@ include 'Latex' as part of the metadata without any value:
     Date: 1 sep 2012
     Status: draft
     Latex:
+
+To find metadata in your (La)TeX source files, the contents of these macros 
+are used:
+
+    \@author
+    \@title
+    \@summary
+    \@date
+    \@modified
+    \@tags
+    \@category
+
+These are then translated to meta fields in the intermediary HTML document.
+
+Some of them are defined by standard macros like `\author{}`, you can define a similar macro
+
+     \def\tags#1{\gdef\@tags{#1}}
 
 Latex Examples
 --------------
