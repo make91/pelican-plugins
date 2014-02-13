@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"><title>smartass101ovy Pelican doplňky</title><link href="http://smartass101.github.io/pelican-plugins/cz/" rel="alternate"></link><link href="http://smartass101.github.io/pelican-plugins/feeds/latex.atom.xml" rel="self"></link><id>http://smartass101.github.io/pelican-plugins/cz/</id><updated>2014-02-13T00:00:00+01:00</updated><entry><title>Some title</title><link href="http://smartass101.github.io/pelican-plugins/cz/some-title.html" rel="alternate"></link><updated>2014-02-13T00:00:00+01:00</updated><author><name>smartass101</name></author><id>tag:smartass101.github.io,2014-02-13:pelican-plugins/cz/some-title.html</id><summary type="html">
+&lt;!--l. 8--&gt;&lt;p class="noindent"&gt;This article was rendered from a &lt;span class="LATEX"&gt;L&lt;span class="A"&gt;A&lt;/span&gt;&lt;span class="TEX"&gt;T&lt;span class="E"&gt;E&lt;/span&gt;X&lt;/span&gt;&lt;/span&gt; source.
+   &lt;h3 class="sectionHead"&gt;&lt;span class="titlemark"&gt;1   &lt;/span&gt; &lt;a id="x1-10001"&gt;&lt;/a&gt;The most beautiful equation&lt;/h3&gt;
+   &lt;table class="equation"&gt;&lt;tr&gt;&lt;td&gt;
+&lt;!--l. 15--&gt;&lt;math xmlns="http://www.w3.org/1998/Math/MathML" display="block" class="equation"&gt;
+                             &lt;mstyle id="x1-1001r1" class="label"&gt;&lt;/mstyle&gt;&lt;!--endlabel--&gt;&lt;msup&gt;&lt;mrow&gt;&lt;mi&gt;e&lt;/mi&gt;&lt;/mrow&gt;&lt;mrow&gt;&lt;mi&gt;i&lt;/mi&gt;&lt;mi&gt;π&lt;/mi&gt;&lt;/mrow&gt;&lt;/msup&gt; &lt;mo class="MathClass-rel"&gt;=&lt;/mo&gt; &lt;mo class="MathClass-bin"&gt;-&lt;/mo&gt;&lt;mn&gt;1&lt;/mn&gt;
+&lt;/math&gt;&lt;/td&gt;&lt;td class="eq-no"&gt;(1)&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;!--l. 18--&gt;&lt;p class="nopar"&gt;
+&lt;!--l. 20--&gt;&lt;p class="noindent"&gt;
+   &lt;h4 class="subsectionHead"&gt;&lt;span class="titlemark"&gt;1.1   &lt;/span&gt; &lt;a id="x1-20001.1"&gt;&lt;/a&gt;Why is it so beautiful&lt;/h4&gt;
+     &lt;ul class="itemize1"&gt;
+     &lt;li class="itemize"&gt;a multiplication using 2 irrational and 1 imaginary number
+     &lt;/li&gt;
+     &lt;li class="itemize"&gt;yields a negative natural number&lt;/li&gt;&lt;/ul&gt;
+    
+</summary></entry></feed>

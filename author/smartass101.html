@@ -5,7 +5,6 @@
         <title>smartass101's Pelican plugins - smartass101</title>
         <link rel="stylesheet" href="http://smartass101.github.io/pelican-plugins/theme/css/main.css" />
         <link href="http://smartass101.github.io/pelican-plugins/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="smartass101's Pelican plugins Atom Feed" />
-
         <!--[if IE]>
             <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
         <![endif]-->
@@ -20,13 +19,53 @@
 		    <!-- separator -->
 		    <li style="background-color: white; padding: 5px;">&nbsp</li>
                     <li><a href="http://smartass101.github.io/pelican-plugins/category/i18n_subsites.html">i18n_subsites</a></li>
+                    <li><a href="http://smartass101.github.io/pelican-plugins/category/latex.html">latex</a></li>
                 </ul>
 		</nav>		
         </header><!-- /#banner -->
 
             <aside id="featured" class="body">
                 <article>
-                    <h1 class="entry-title"><a href="http://smartass101.github.io/pelican-plugins/implementing-lang-buttons.html">Implementing language buttons</a></h1>
+                    <h1 class="entry-title"><a href="http://smartass101.github.io/pelican-plugins/some-title.html">Some  title</a></h1>
+<footer class="post-info">
+        <abbr class="published" title="2014-02-13T00:00:00">
+Published: Thu 13 February 2014
+        </abbr>
+
+        <address class="vcard author">
+By <a class="url fn" href="http://smartass101.github.io/pelican-plugins/author/smartass101.html">smartass101</a>
+        </address>
+        <p>In <a href="http://smartass101.github.io/pelican-plugins/category/latex.html">latex</a>. </p>
+
+</footer><!-- /.post-info -->
+<!--l. 8--><p class="noindent">This article was rendered from a <span class="LATEX">L<span class="A">A</span><span class="TEX">T<span class="E">E</span>X</span></span> source.
+   <h3 class="sectionHead"><span class="titlemark">1   </span> <a id="x1-10001"></a>The most beautiful equation</h3>
+   <table class="equation"><tr><td>
+<!--l. 15--><math xmlns="http://www.w3.org/1998/Math/MathML" display="block" class="equation">
+                             <mstyle id="x1-1001r1" class="label"></mstyle><!--endlabel--><msup><mrow><mi>e</mi></mrow><mrow><mi>i</mi><mi>π</mi></mrow></msup> <mo class="MathClass-rel">=</mo> <mo class="MathClass-bin">-</mo><mn>1</mn>
+</math></td><td class="eq-no">(1)</td></tr></table>
+<!--l. 18--><p class="nopar">
+<!--l. 20--><p class="noindent">
+   <h4 class="subsectionHead"><span class="titlemark">1.1   </span> <a id="x1-20001.1"></a>Why is it so beautiful</h4>
+     <ul class="itemize1">
+     <li class="itemize">a multiplication using 2 irrational and 1 imaginary number
+     </li>
+     <li class="itemize">yields a negative natural number</li></ul>
+    
+                </article>
+            </aside><!-- /#featured -->
+                <section id="content" class="body">
+                <h1>Other articles</h1>
+                    <hr />
+                    <ol id="posts-list" class="hfeed">
+
+            <li><article class="hentry">
+                <header>
+                    <h1><a href="http://smartass101.github.io/pelican-plugins/implementing-lang-buttons.html" rel="bookmark"
+                           title="Permalink to Implementing language buttons">Implementing language buttons</a></h1>
+                </header>
+
+                <div class="entry-content">
 <footer class="post-info">
         <abbr class="published" title="2014-02-03T00:00:00">
 Published: Mon 03 February 2014
@@ -37,111 +76,12 @@ By <a class="url fn" href="http://smartass101.github.io/pelican-plugins/author/s
         </address>
         <p>In <a href="http://smartass101.github.io/pelican-plugins/category/i18n_subsites.html">i18n_subsites</a>. </p>
 
-</footer><!-- /.post-info --><p>Each article with translations has translations links, but that's the only way to switch between language subsites.</p>
+</footer><!-- /.post-info -->                <p>Each article with translations has translations links, but that's the only way to switch between language subsites.</p>
 <p>I wanted to make it simple to switch between the language subsites on all pages, so I decided to add language buttons to the top menu bar.</p>
-<p>For this purpose I used the <tt class="docutils literal">extra_siteurls</tt> dictionary exported by the <tt class="docutils literal">i18n_subsites</tt> plugin into the template context. This dictionary maps the language code to the SITEURL of the respective subsite. But I wanted the language button to show the names of the languages, not just the language codes.</p>
-<p>Perhaps I should have added support for putting the names in <tt class="docutils literal">I18N_SUBSITES</tt> and exporting the names in <tt class="docutils literal">extra_siteurls</tt> too? No, I want to keep the <tt class="docutils literal">i18n_subsites</tt> plugin as simple as possible and let people add features onto it. IMHO that is better than making many assumptions about what people may want, because you cannot please everyone, e.g. somebody would rather put there flags <a class="footnote-reference" href="#flags" id="id1">[1]</a>.</p>
-<p>So, the (IMHO) simplest way to support this is to make a simple jinja2 filter that translates the language code to the language name via a dictionary. Here is the relevant part of my pelicanconf.py</p>
-<div class="highlight"><pre><span class="n">languages_lookup</span> <span class="o">=</span> <span class="p">{</span>
-             <span class="s">&#39;en&#39;</span><span class="p">:</span> <span class="s">&#39;English&#39;</span><span class="p">,</span>
-             <span class="s">&#39;cz&#39;</span><span class="p">:</span> <span class="s">&#39;Čeština&#39;</span><span class="p">,</span>
-             <span class="p">}</span>
-
-<span class="k">def</span> <span class="nf">lookup_lang_name</span><span class="p">(</span><span class="n">lang_code</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">languages_lookup</span><span class="p">[</span><span class="n">lang_code</span><span class="p">]</span>
-
-<span class="n">JINJA_FILTERS</span> <span class="o">=</span> <span class="p">{</span>
-             <span class="s">&#39;lookup_lang_name&#39;</span><span class="p">:</span> <span class="n">lookup_lang_name</span><span class="p">,</span>
-             <span class="p">}</span>
-</pre></div>
-<p>Now it's just a matter of using the filter in the <tt class="docutils literal">base.html</tt> template at the beginning of the navbar</p>
-<div class="highlight"><pre><span class="x">&lt;!-- SNIP --&gt;</span>
-<span class="x">&lt;nav&gt;&lt;ul&gt;</span>
-<span class="cp">{%</span> <span class="k">if</span> <span class="nv">extra_siteurls</span> <span class="cp">%}</span><span class="x"></span>
-<span class="cp">{%</span> <span class="k">for</span> <span class="nv">lang</span><span class="o">,</span> <span class="nv">url</span> <span class="k">in</span> <span class="nv">extra_siteurls.items</span><span class="o">()</span> <span class="cp">%}</span><span class="x"></span>
-<span class="x">&lt;li&gt;&lt;a href=&quot;</span><span class="cp">{{</span> <span class="nv">url</span> <span class="cp">}}</span><span class="x">&quot;&gt;</span><span class="cp">{{</span> <span class="nv">lang</span> <span class="o">|</span> <span class="nf">lookup_lang_name</span> <span class="cp">}}</span><span class="x">&lt;/a&gt;&lt;/li&gt;</span>
-<span class="cp">{%</span> <span class="k">endfor</span> <span class="cp">%}</span><span class="x"></span>
-<span class="x">&lt;!-- separator --&gt;</span>
-<span class="x">&lt;li style=&quot;background-color: white; padding: 5px;&quot;&gt;&amp;nbsp&lt;/li&gt;</span>
-<span class="cp">{%</span> <span class="k">endif</span> <span class="cp">%}</span><span class="x"></span>
-<span class="cp">{%</span> <span class="k">for</span> <span class="nv">title</span><span class="o">,</span> <span class="nv">link</span> <span class="k">in</span> <span class="nv">MENUITEMS</span> <span class="cp">%}</span><span class="x"></span>
-<span class="x">&lt;!-- SNIP --&gt;</span>
-</pre></div>
-<div class="section" id="different-design">
-<h2>Different design</h2>
-<p>Later I decided that I want to show the active language in the navbar too
-.
-So, I needed a list of all the languages the site supports, so I used the <em>I18N_SUBSITES</em> dictionary as it is available in templates (because it is an all-caps config setting) and extracted the list of languages as <tt class="docutils literal">I18N_SUBSITES.keys()</tt>.</p>
-<p>Here is the slightly modified template</p>
-<div class="highlight"><pre><span class="x">&lt;!-- SNIP --&gt;</span>
-<span class="x">&lt;nav&gt;&lt;ul&gt;</span>
-<span class="cp">{%</span> <span class="k">if</span> <span class="nv">extra_siteurls</span> <span class="k">and</span> <span class="nv">I18N_SUBSITES</span> <span class="cp">%}</span><span class="x"></span>
-<span class="cp">{%</span> <span class="k">for</span> <span class="nv">lang</span> <span class="k">in</span> <span class="o">[</span><span class="nv">main_lang</span><span class="o">]</span> <span class="o">+</span> <span class="o">(</span><span class="nv">I18N_SUBSITES.keys</span><span class="o">()</span> <span class="o">|</span> <span class="nf">list</span><span class="o">)</span> <span class="cp">%}</span><span class="x"></span>
-<span class="x">&lt;li</span><span class="cp">{%</span> <span class="k">if</span> <span class="nv">lang</span> <span class="o">==</span> <span class="nv">DEFAULT_LANG</span> <span class="cp">%}</span><span class="x"> class=&quot;active&quot;</span><span class="cp">{%</span> <span class="k">endif</span> <span class="cp">%}</span><span class="x">&gt;&lt;a href=&quot;</span><span class="cp">{{</span> <span class="nv">extra_siteurls.get</span><span class="o">(</span><span class="nv">lang</span><span class="o">,</span> <span class="nv">SITEURL</span><span class="o">)</span> <span class="cp">}}</span><span class="x">&quot;&gt;</span><span class="cp">{{</span> <span class="nv">lang</span> <span class="o">|</span> <span class="nf">lookup_lang_name</span> <span class="cp">}}</span><span class="x">&lt;/a&gt;&lt;/li&gt;</span>
-<span class="cp">{%</span> <span class="k">endfor</span> <span class="cp">%}</span><span class="x"></span>
-<span class="x">&lt;!-- separator --&gt;</span>
-<span class="x">&lt;li style=&quot;background-color: white; padding: 5px;&quot;&gt;&amp;nbsp&lt;/li&gt;</span>
-<span class="cp">{%</span> <span class="k">endif</span> <span class="cp">%}</span><span class="x"></span>
-<span class="cp">{%</span> <span class="k">for</span> <span class="nv">title</span><span class="o">,</span> <span class="nv">link</span> <span class="k">in</span> <span class="nv">MENUITEMS</span> <span class="cp">%}</span><span class="x"></span>
-<span class="x">&lt;!-- SNIP --&gt;</span>
-</pre></div>
-<p>What it does:</p>
-<ol class="arabic simple">
-<li>get a list of all languages as the main language (<tt class="docutils literal">main_lang</tt> exported by the <tt class="docutils literal">i18n_subsites</tt> plugin) and the subsites languages. The list filter is needed as <tt class="docutils literal">keys()</tt> does not return a list and the list concatenation (<tt class="docutils literal">+</tt>) would not work</li>
-<li>for each lang it makes link and makes it active if it is the <em>DEFAULT_LANG</em> of the currently rendered subsite</li>
-<li>gets the url for the (sub)site. If the lang is not in <tt class="docutils literal">extra_siteurls</tt>, it must be the current <em>DEFAULT_LANG</em>, so use the current <em>SITEURL</em></li>
-<li>looks up the language name</li>
-</ol>
-<p>You can see the result for yourself at the top of the page.</p>
-<p>Now that I look at the above snippet, I'm not sure if <tt class="docutils literal">extra_siteurls</tt> is that convenient. Perhaps something like <tt class="docutils literal">lang_siteurls</tt> dictionary for all languages would have been more convenient. Anyways, all the information is available in the context at the moment, if it bugs you too much, contact me and I'll improve it.</p>
-</div>
-<div class="section" id="update-added-lang-siteurls-for-convenience-sake">
-<h2>Update: added <tt class="docutils literal">lang_siteurls</tt> for convenience' sake</h2>
-<p>I decided that I want to make things as easy as possible for the user, so I implemented <tt class="docutils literal">lang_siteurls</tt>.</p>
-<p>So now I use this in my template</p>
-<div class="highlight"><pre><span class="x">&lt;!-- SNIP --&gt;</span>
-<span class="x">&lt;nav&gt;&lt;ul&gt;</span>
-<span class="cp">{%</span> <span class="k">if</span> <span class="nv">lang_siteurls</span> <span class="cp">%}</span><span class="x"></span>
-<span class="cp">{%</span> <span class="k">for</span> <span class="nv">lang</span><span class="o">,</span> <span class="nv">siteurl</span> <span class="k">in</span> <span class="nv">lang_siteurls.items</span><span class="o">()</span> <span class="cp">%}</span><span class="x"></span>
-<span class="x">&lt;li</span><span class="cp">{%</span> <span class="k">if</span> <span class="nv">lang</span> <span class="o">==</span> <span class="nv">DEFAULT_LANG</span> <span class="cp">%}</span><span class="x"> class=&quot;active&quot;</span><span class="cp">{%</span> <span class="k">endif</span> <span class="cp">%}</span><span class="x">&gt;&lt;a href=&quot;</span><span class="cp">{{</span> <span class="nv">siteurl</span> <span class="cp">}}</span><span class="x">&quot;&gt;</span><span class="cp">{{</span> <span class="nv">lang</span> <span class="o">|</span> <span class="nf">lookup_lang_name</span> <span class="cp">}}</span><span class="x">&lt;/a&gt;&lt;/li&gt;</span>
-<span class="cp">{%</span> <span class="k">endfor</span> <span class="cp">%}</span><span class="x"></span>
-<span class="x">&lt;!-- separator --&gt;</span>
-<span class="x">&lt;li style=&quot;background-color: white; padding: 5px;&quot;&gt;&amp;nbsp&lt;/li&gt;</span>
-<span class="cp">{%</span> <span class="k">endif</span> <span class="cp">%}</span><span class="x"></span>
-<span class="cp">{%</span> <span class="k">for</span> <span class="nv">title</span><span class="o">,</span> <span class="nv">link</span> <span class="k">in</span> <span class="nv">MENUITEMS</span> <span class="cp">%}</span><span class="x"></span>
-<span class="x">&lt;!-- SNIP --&gt;</span>
-</pre></div>
-<p>Much nicer, don't you think? ;)</p>
-<p>I also implemented <tt class="docutils literal">lang_siteurls</tt> and <tt class="docutils literal">extra_siteurls</tt> as an <tt class="docutils literal">OrderedDict</tt> so that <tt class="docutils literal">main_lang</tt> is always first. This also means that you can change the ordering of the dict through some jinja filter function like this in your config</p>
-<div class="highlight"><pre><span class="k">def</span> <span class="nf">my_ordered_items</span><span class="p">(</span><span class="n">ordered_dict</span><span class="p">):</span>
-    <span class="n">items</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">ordered_dict</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
-    <span class="c"># swap first and last using tuple unpacking</span>
-    <span class="n">items</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">items</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">items</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">items</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="k">return</span> <span class="n">items</span>
-
-<span class="n">JINJA_FILTERS</span> <span class="o">=</span> <span class="p">{</span>
-             <span class="o">...</span>
-             <span class="s">&#39;my_ordered_items&#39;</span><span class="p">:</span> <span class="n">my_ordered_items</span><span class="p">,</span>
-             <span class="p">}</span>
-</pre></div>
-<p>And then the <tt class="docutils literal">for</tt> loop line in the template becomes</p>
-<div class="highlight"><pre><span class="x">&lt;!-- SNIP --&gt;</span>
-<span class="cp">{%</span> <span class="k">for</span> <span class="nv">lang</span><span class="o">,</span> <span class="nv">siteurl</span> <span class="k">in</span> <span class="nv">lang_siteurls</span> <span class="o">|</span> <span class="nf">my_ordered_items</span> <span class="cp">%}</span><span class="x"></span>
-<span class="x">&lt;!-- SNIP --&gt;</span>
-</pre></div>
-<table class="docutils footnote" frame="void" id="flags" rules="none">
-<colgroup><col class="label" /><col /></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td>Although it may look nice, <a class="reference external" href="http://www.w3.org/TR/i18n-html-tech-lang/#ri20040808.173208643">w3 discourages it</a>.</td></tr>
-</tbody>
-</table>
-</div>
-                </article>
-            </aside><!-- /#featured -->
-                <section id="content" class="body">
-                <h1>Other articles</h1>
-                    <hr />
-                    <ol id="posts-list" class="hfeed">
+<p>For this purpose I used ...</p>
+                <a class="readmore" href="http://smartass101.github.io/pelican-plugins/implementing-lang-buttons.html">read more</a>
+                </div><!-- /.entry-content -->
+            </article></li>
 
             <li><article class="hentry">
                 <header>
