@@ -33,7 +33,7 @@ DEFAULT_PAGINATION = 10
 #RELATIVE_URLS = True
 
 PLUGIN_PATH = "/home/ondrej/projects/pelican/repos/pelican-plugins"
-PLUGINS = ["i18n_subsites"]
+PLUGINS = ["i18n_subsites", 'latex']
 
 JINJA_EXTENSIONS = ['jinja2.ext.i18n']
 
