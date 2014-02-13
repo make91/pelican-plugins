@@ -34,7 +34,7 @@ between the `<head>` parameters (for the NotMyIdea template, this file is base.h
         {{ page.latex }}
     {% endif %}
 
-This plugin also installes the `Tex4htReader` which can read most (La)TeX files
+This plugin also installs the `Tex4htReader` which can read most (La)TeX files
 and translates them to HTML which is then read by the standard `HTMLReader`
 
 Usage
