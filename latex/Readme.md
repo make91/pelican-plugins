@@ -66,8 +66,10 @@ are used:
 These are then translated to meta fields in the intermediary HTML document.
 
 Some of them are defined by standard macros like `\author{}`, you can define a similar macro
-
+     
+     \makeatletter  % to enable the use of @ character
      \def\tags#1{\gdef\@tags{#1}}
+     \makeatother
 
 Latex Examples
 --------------
