@@ -22,11 +22,11 @@ from pelican.utils import pelican_open
 
 
 # configuration file for tex4ht that makes it output only body contents
-DEFAULT_TEX4HT_CFG = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'pelican_tex4ht')
+_DEFAULT_TEX4HT_CFG = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'pelican_tex4ht')
 # metadata fields regexp
-METADATA_REGEXP = re.compile(r'%metadata (?P<key>.*): (?P<value>.*)',
+_METADATA_REGEXP = re.compile(r'%metadata (?P<key>.*): (?P<value>.*)',
                              re.UNICODE | re.DOTALL | re.IGNORECASE)
-META_MACROS_REGEXP = re.compile(r'\\(?P<key>author|date|title)\{(?P<value>.*?)\}',
+_META_MACROS_REGEXP = re.compile(r'\\(?P<key>author|date|title)\{(?P<value>.*?)\}',
                                 re.UNICODE | re.DOTALL | re.IGNORECASE)
 
 
@@ -42,7 +42,7 @@ class TeXReader(BaseReader):
         """Initialize reader and get compiler settings"""
         super(TeXReader, self).__init__(*args, **kwargs)
         self.compiler = self.settings.get('MK4HT_COMPILER', 'htlatex')
-        self.compiler_cfg = self.settings.get('MK4HT_COMPILER_CFG', DEFAULT_TEX4HT_CFG)
+        self.compiler_cfg = self.settings.get('MK4HT_COMPILER_CFG', _DEFAULT_TEX4HT_CFG)
         self.compiler_opts = self.settings.get('MK4HT_COMPILER_OPTS', 'mathml,-css,NoFonts,charset=utf8')
         self.tex4ht_opts = self.settings.get('TEX4HT_OPTS', ' -cunihtf -utf8') #notice the space
         self.t4ht_opts = self.settings.get('T4HT_OPTS', '')
@@ -81,8 +81,8 @@ class TeXReader(BaseReader):
     def extract_metadata(self, filename):
         """Extract metadata from comments and common macros in source file"""
         with pelican_open(filename) as source:
-            metadata = dict(match.groups() for match in METADATA_REGEXP.finditer(source) if match is not None)
-            metadata.update(match.groups() for match in META_MACROS_REGEXP.finditer(source) if match is not None)
+            metadata = dict(match.groups() for match in _METADATA_REGEXP.finditer(source) if match is not None)
+            metadata.update(match.groups() for match in _META_MACROS_REGEXP.finditer(source) if match is not None)
             for key, value in metadata.items():
                 metadata[key] = self.process_metadata(key, value)
 
