@@ -11,53 +11,91 @@ writing equations in by using `\begin{equation}`...`\end{equation}`.
 
 
 import os
-from tempfile import mkdtemp, mkstemp
+import re
+from tempfile import mkdtemp
 from shutil import rmtree
 import subprocess as sp
 
 from pelican import signals
-from pelican.readers import HTMLReader
+from pelican.readers import BaseReader
+from pelican.utils import pelican_open
 
 
-# configuration file for tex4ht that implements metadata TeX macros
-# which are translated to meta fields for the HTMLReader
-tex4ht_cfg = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'pelican_tex4ht')
+# configuration file for tex4ht that makes it output only body contents
+DEFAULT_TEX4HT_CFG = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'pelican_tex4ht')
+# metadata fields regexp
+METADATA_REGEXP = re.compile(r'%metadata (?P<key>.*): (?P<value>.*)',
+                             re.UNICODE | re.DOTALL | re.IGNORECASE)
+META_MACROS_REGEXP = re.compile(r'\\(?P<key>author|date|title)\{(?P<value>.*?)\}',
+                                re.UNICODE | re.DOTALL | re.IGNORECASE)
 
 
-class Tex4htReader(HTMLReader):
-    """Reads *.tex files (including LaTeX) using tex4ht
+class TeXReader(BaseReader):
+    """Reads *.tex files (including LaTeX) using the tex4ht suite
 
-    which transforms them into HTML files
-    which are then read by the standard HTMLReader
+    which transforms them into HTML files (only the body contents are used)
     """
     enabled = True
     file_extensions = ['tex']
-                  
-    def read(self, filename):
-        """Let tex4ht create a HTML file and then parse it"""
+
+    def __init__(self, *args, **kwargs):
+        """Initialize reader and get compiler settings"""
+        super(TeXReader, self).__init__(*args, **kwargs)
+        self.compiler = self.settings.get('MK4HT_COMPILER', 'htlatex')
+        self.compiler_cfg = self.settings.get('MK4HT_COMPILER_CFG', DEFAULT_TEX4HT_CFG)
+        self.compiler_opts = self.settings.get('MK4HT_COMPILER_OPTS', 'mathml,-css,NoFonts,charset=utf8')
+        self.tex4ht_opts = self.settings.get('TEX4HT_OPTS', ' -cunihtf -utf8') #notice the space
+        self.t4ht_opts = self.settings.get('T4HT_OPTS', '')
+
+    def compile_content(self, filename):
+        """Compile HTML body contents using mk4ht"""
         temp_dir = mkdtemp()
-        process = sp.Popen(['mk4ht', 'htlatex', os.path.abspath(filename),
-                            tex4ht_cfg + ',mathml,-css,NoFonts,charset=utf8',
-                            '-cunihtf -utf8',
+        try:
+            devnull = sp.DEVNULL          # NOQA
+        except AttributeError:                   # py2k
+            devnull = open(os.devnull, 'wb')
+        process = sp.Popen(['mk4ht', self.compiler, filename,
+                            self.compiler_cfg + ',' + self.compiler_opts,
+                            self.tex4ht_opts,
+                            self.t4ht_opts,
                             ],
-                            stdout=sp.DEVNULL,
-                            stderr=sp.DEVNULL,
+                            stdout=devnull,
+                            stderr=devnull,
                             cwd=temp_dir,
             )
-        process.wait()
+        exit_code = process.wait()
+        if exit_code != 0:
+            raise RuntimeError('mk4ht exited with code {},\nfull log: {}'.format(exit_code,
+                      os.path.join(temp_dir, os.path.basename(filename).replace('.tex', '.log'))
+                      ))
 
         html_output = os.path.join(temp_dir, os.path.basename(filename).replace('.tex', '.html'))
-        content, metadata = super(Tex4htReader, self).read(html_output)  # parse the HTML
+        with pelican_open(html_output) as raw_content:
+            content = raw_content.strip() # remove extra whitespace
         
         # clean up
         rmtree(temp_dir)
 
-        return content, metadata
+        return content
+
+    def extract_metadata(self, filename):
+        """Extract metadata from comments and common macros in source file"""
+        with pelican_open(filename) as source:
+            metadata = dict(match.groups() for match in METADATA_REGEXP.finditer(source) if match is not None)
+            metadata.update(match.groups() for match in META_MACROS_REGEXP.finditer(source) if match is not None)
+            for key, value in metadata.items():
+                metadata[key] = self.process_metadata(key, value)
+
+        return metadata
+
+    def read(self, filename):
+        """Let tex4ht create a HTML body contents and parse the *.tex file for metadata"""
+        return self.compile_content(filename), self.extract_metadata(filename)
 
 
 def add_reader(readers):
-    """Register the Tex4htReader"""
-    readers.reader_classes['tex'] = Tex4htReader
+    """Register the TeXReader"""
+    readers.reader_classes['tex'] = TeXReader
 
     
 # Reference about dynamic loading of MathJax can be found at http://docs.mathjax.org/en/latest/dynamic.html

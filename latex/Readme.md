@@ -34,8 +34,8 @@ between the `<head>` parameters (for the NotMyIdea template, this file is base.h
         {{ page.latex }}
     {% endif %}
 
-This plugin also installs the `Tex4htReader` which can read most (La)TeX files
-and translates them to HTML which is then read by the standard `HTMLReader`
+This plugin also installs the `TeXReader` which can read most (La)TeX files
+with a file extension `*.tex`.
 
 Usage
 -----
@@ -52,24 +52,29 @@ include 'Latex' as part of the metadata without any value:
     Status: draft
     Latex:
 
-To find metadata in your (La)TeX source files, the contents of these macros 
-are used:
+###TeXReader usage
 
-    \@author
-    \@title
-    \@summary
-    \@date
-    \@modified
-    \@tags
-    \@category
+####Metadata in (La)TeX files
 
-These are then translated to meta fields in the intermediary HTML document.
+Arbitrary metadata can be specified in comments in this form
 
-Some of them are defined by standard macros like `\author{}`, you can define a similar macro
-     
-     \makeatletter  % to enable the use of @ character
-     \def\tags#1{\gdef\@tags{#1}}
-     \makeatother
+    %metadata tags: awesome,fun
+    %metadata lang: en
+    %metadata category: math
+
+Additionally, the information defined by the standard macros
+
+    \title{}
+    \author{}
+    \date{}
+
+is also used as metadata.
+
+####Tex4ht configuration
+
+The `TeXReader` uses the `tex4ht` suite to compile (La)TeX into HTML files.
+You can configure arguments to the `mk4ht` command using config variables used
+in the `TeXReader.__init__` method. Alter them only if you know what you are doing!
 
 Latex Examples
 --------------
