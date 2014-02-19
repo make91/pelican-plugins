@@ -23,9 +23,16 @@ for template builders that want to adjust look and feel of the math.
 See README for more details.
 """
 
+import os
+import re
+from tempfile import mkdtemp
+from shutil import rmtree
+import subprocess as sp
+
 from pelican import signals
 from pelican import contents
-import re
+from pelican.readers import BaseReader
+from pelican.utils import pelican_open
 
 # Global Variables
 _TYPOGRIFY = False  # used to determine if we should process typogrify
@@ -63,6 +70,81 @@ _MATHJAX_SCRIPT="""
     }}
 </script>
 """
+# configuration file for tex4ht that makes it output only body contents
+_DEFAULT_TEX4HT_CFG = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'pelican_tex4ht')
+# metadata fields regexp
+_METADATA_REGEXP = re.compile(r'%metadata (?P<key>.*): (?P<value>.*)$',
+                              re.UNICODE | re.IGNORECASE | re.MULTILINE)
+_META_MACROS_REGEXP = re.compile(r'\\(?P<key>author|date|title)\{(?P<value>.*?)\}',
+                                 re.UNICODE | re.IGNORECASE | re.DOTALL)
+
+
+class TeXReader(BaseReader):
+    """Reads *.tex files (including LaTeX) using the tex4ht suite
+
+    which transforms them into HTML files (only the body contents are used)
+    """
+    enabled = True
+    file_extensions = ['tex']
+
+    def __init__(self, *args, **kwargs):
+        """Initialize reader and get compiler settings"""
+        super(TeXReader, self).__init__(*args, **kwargs)
+        self.compiler = self.settings.get('MK4HT_COMPILER', 'htlatex')
+        self.compiler_cfg = self.settings.get('MK4HT_COMPILER_CFG', _DEFAULT_TEX4HT_CFG)
+        self.compiler_opts = self.settings.get('MK4HT_COMPILER_OPTS', 'mathml,-css,NoFonts,charset=utf8')
+        self.tex4ht_opts = self.settings.get('TEX4HT_OPTS', ' -cunihtf -utf8') #notice the space
+        self.t4ht_opts = self.settings.get('T4HT_OPTS', '')
+
+    def compile_content(self, filename):
+        """Compile HTML body contents using mk4ht"""
+        temp_dir = mkdtemp()
+        try:
+            devnull = sp.DEVNULL          # NOQA
+        except AttributeError:                   # py2k
+            devnull = open(os.devnull, 'wb')
+        process = sp.Popen(['mk4ht', self.compiler, filename,
+                            self.compiler_cfg + ',' + self.compiler_opts,
+                            self.tex4ht_opts,
+                            self.t4ht_opts,
+                            ],
+                            stdout=devnull,
+                            stderr=devnull,
+                            cwd=temp_dir,
+            )
+        exit_code = process.wait()
+        if exit_code != 0:
+            raise RuntimeError('mk4ht exited with code {},\nfull log: {}'.format(exit_code,
+                      os.path.join(temp_dir, os.path.basename(filename).replace('.tex', '.log'))
+                      ))
+
+        html_output = os.path.join(temp_dir, os.path.basename(filename).replace('.tex', '.html'))
+        with pelican_open(html_output) as raw_content:
+            content = raw_content.strip() # remove extra whitespace
+
+        # clean up
+        rmtree(temp_dir)
+
+        return content
+
+    def extract_metadata(self, filename):
+        """Extract metadata from comments and common macros in source file"""
+        with pelican_open(filename) as source:
+            metadata = dict(match.groups() for match in _METADATA_REGEXP.finditer(source) if match is not None)
+            metadata.update(match.groups() for match in _META_MACROS_REGEXP.finditer(source) if match is not None)
+            for key, value in metadata.items():
+                metadata[key] = self.process_metadata(key, value)
+
+        return metadata
+
+    def read(self, filename):
+        """Let tex4ht create a HTML body contents and parse the *.tex file for metadata"""
+        return self.compile_content(filename), self.extract_metadata(filename)
+
+
+def add_reader(readers):
+    """Register the TeXReader"""
+    readers.reader_classes['tex'] = TeXReader
 
 
 # Python standard library for binary search, namely bisect is cool but I need
@@ -342,6 +424,6 @@ def pelican_init(pelicanobj):
 
 def register():
     """Plugin registration"""
-
+    signals.readers_init.connect(add_reader)
     signals.initialized.connect(pelican_init)
     signals.content_object_init.connect(process_content)

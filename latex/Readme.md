@@ -40,6 +40,15 @@ math is cut off, it will add it back into the summary.
 No alteration is needed to a template for this plugin to work. Just install
 the plugin and start writing your Math.
 
+### TeXReader
+
+This plugin also installs the `TeXReader` which can read most (La)TeX files
+with a file extension `*.tex`. It uses a real (la)tex compiler under the hood,
+so it is as fast as the compiler is. On the other hand, it is able to process
+almost any macro, e.g. `\input{}`, `\ref{}`, etc. The reader requires the 
+[tex4ht converter suite](http://www.tug.org/tex4ht/) installed and the 
+`mk4ht` program must be in `PATH`.
+
 Usage
 -----
 ### Backward Compatibility
@@ -75,6 +84,30 @@ For example, in settings.py, the following would make math render in blue and
 displaymath align to the left:
 
     LATEX = {'color':'blue','align':left}
+
+### TeXReader usage
+
+#### Metadata in (La)TeX files
+
+Arbitrary metadata can be specified in comments in this form, one per line
+
+    %metadata tags: awesome,fun
+    %metadata lang: en
+    %metadata category: math
+
+Additionally, the information defined by the standard macros
+
+    \title{}
+    \author{}
+    \date{}
+
+is also used as metadata.
+
+#### Tex4ht configuration
+
+The `TeXReader` uses the `tex4ht` suite to compile (La)TeX into HTML files.
+You can configure arguments to the `mk4ht` command using config variables used
+in the `TeXReader.__init__` method. Alter them only if you know what you are doing!
 
 Latex Examples
 --------------
