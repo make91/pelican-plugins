@@ -19,13 +19,17 @@ like `TeX Live <https://www.tug.org/texlive/>`_ or `MiKTeX <http://miktex.org/>`
 
 The ``mk4ht`` command from that suite must be in ``PATH``.
 
-latex Pelican plugin (optional)
-...............................
+MathJax (optional)
+..................
 
 The reader renders math as `MathML <http://en.wikipedia.org/wiki/MathML>`_ by default.
-To render MathML more nicely and consistently accross most browsers, 
-the `latex Pelican plugin <https://github.com/getpelican/pelican-plugins/tree/master/latex>`_ 
-can be used to render it using the `MathJax <http://www.mathjax.org/>`_ JavaScript engine.
+To render MathML more nicely and consistently across most browsers, 
+`MathJax <http://www.mathjax.org/>`_ JavaScript engine may be used. It can be loaded by theme
+templates as a `script from the MathJax CDN <http://docs.mathjax.org/en/latest/start.html#mathjax-cdn>`_.
+
+The `latex Pelican plugin <https://github.com/getpelican/pelican-plugins/tree/master/latex>`_ 
+will load MathJax automatically whenever MathML code is detected and will also ensure Typogrify 
+will not interfere.
 
 Installation
 ------------
