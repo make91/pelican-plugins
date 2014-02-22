@@ -74,6 +74,14 @@ so any path given to macros may be relative to one of these directories.
 However, the path must not start with ``./`` or ``../``, 
 i.e. ``../data.texinput`` will not work.
 
+Images
+......
+
+The ``\includegrephics{}`` macro used for images inclusion will look 
+for image files in the same way that ``\input{}`` does. The optional
+``width`` parameters is recognized too, but beware, the given dimension 
+is translated to points (``pt``).
+
 TeX4ht configuration
 ....................
 
