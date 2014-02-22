@@ -61,14 +61,15 @@ class TeXReader(BaseReader):
                             stderr=devnull,
                             cwd=temp_dir,
             )
-        exit_code = process.wait()
+        process.wait()
         output_template = os.path.join(temp_dir, os.path.basename(filename).replace('.tex', '{}'))
-        if exit_code != 0:
-            raise RuntimeError('mk4ht exited with code {},\nfull log: {}'.format(exit_code,
-                      output_template.format('.log'),
+        html_output = output_template.format('.html')
+        if not os.path.isfile(html_output):
+            raise RuntimeError('mk4ht did not produce HTML output,\nfull log: {}'.format(
+                output_template.format('.log'),
                       ))
 
-        with pelican_open(output_template.format('.html')) as raw_content:
+        with pelican_open(html_output) as raw_content:
             content = raw_content.strip() # remove extra whitespace
         # prepend content with scoped css style info to render it properly
         with pelican_open(output_template.format('.css')) as css_output:
