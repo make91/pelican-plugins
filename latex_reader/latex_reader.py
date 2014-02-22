@@ -52,6 +52,10 @@ class TeXReader(BaseReader):
             devnull = sp.DEVNULL          # NOQA
         except AttributeError:                   # py2k
             devnull = open(os.devnull, 'wb')
+        os.environ['TEXINPUTS'] = '{file_dir}:{content_dir}:'.format(
+            file_dir=os.path.dirname(filename),         # simulate CWD
+            content_dir=os.path.abspath(self.settings['PATH']),
+            )
         process = sp.Popen(['mk4ht', self.compiler, filename,
                             self.compiler_cfg + ',' + self.compiler_opts,
                             self.tex4ht_opts,
@@ -60,6 +64,7 @@ class TeXReader(BaseReader):
                             stdout=devnull,
                             stderr=devnull,
                             cwd=temp_dir,
+                            env=os.environ,
             )
         process.wait()
         output_template = os.path.join(temp_dir, os.path.basename(filename).replace('.tex', '{}'))

@@ -56,6 +56,20 @@ Additionally, the information defined by the standard macros
 
 is also used as metadata.
 
+\input{}, \include* macros
+..........................
+
+Any macros that search for content with a given path are instructed
+by the ``TEXINPUTS`` environment variable to search in
+
+1. the directory where the currently processed content is
+2. the main content directory (pelican setting ``PATH``)
+
+so any path given to macros may be relative to one of these directories.
+
+However, the path must not start with ``./`` or ``../``, 
+i.e. ``../data.texinput`` will not work.
+
 TeX4ht configuration
 ....................
 
@@ -81,4 +95,14 @@ in browsers that support it, only the desired content will be
 affected. However, it is unlikely that the unconventional class names
 used by TeX4ht will interfere with the CSS used by the theme. If you
 know a better solution, file an issue.
+
+Future plans
+------------
+- images support
+    - extensions management
+    - dimensions, scale management - provide bounding box info
+    - converting of eps -> would also enable bitmap math
+- Bib(La)Tex support
+    - select which backend to use
+    - modify build process to run bib(la)tex after running latex
 
