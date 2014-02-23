@@ -48,10 +48,7 @@ class TeXReader(BaseReader):
     def compile_content(self, filename):
         """Compile HTML body contents using mk4ht"""
         temp_dir = mkdtemp()
-        try:
-            devnull = sp.DEVNULL          # NOQA
-        except AttributeError:                   # py2k
-            devnull = open(os.devnull, 'wb')
+        logfile = open(os.path.join(temp_dir, 'mk4ht_process.log'), 'w')
         os.environ['TEXINPUTS'] = '{file_dir}:{content_dir}:'.format(
             file_dir=os.path.dirname(filename),         # simulate CWD
             content_dir=os.path.abspath(self.settings['PATH']),
@@ -61,8 +58,8 @@ class TeXReader(BaseReader):
                             self.tex4ht_opts,
                             self.t4ht_opts,
                             ],
-                            stdout=devnull,
-                            stderr=devnull,
+                            stdout=logfile,
+                            stderr=logfile,
                             cwd=temp_dir,
                             env=os.environ,
             )
@@ -70,8 +67,9 @@ class TeXReader(BaseReader):
         output_template = os.path.join(temp_dir, os.path.basename(filename).replace('.tex', '{}'))
         html_output = output_template.format('.html')
         if not os.path.isfile(html_output):
-            raise RuntimeError('mk4ht did not produce HTML output,\nfull log: {}'.format(
+            raise RuntimeError('mk4ht did not produce HTML output,\nlogs: {}\n      {}'.format(
                 output_template.format('.log'),
+                logfile.name,
                       ))
 
         with pelican_open(html_output) as raw_content:
