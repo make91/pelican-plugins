@@ -25,7 +25,7 @@ _main_site_lang = "en"
 _main_siteurl = ''
 _lang_siteurls = None
 logger = logging.getLogger(__name__)
-
+_pretaxonomy_available = hasattr(signals, 'article_generator_pretaxonomy')
 
 
 def disable_lang_vars(pelican_obj):
@@ -138,16 +138,9 @@ def update_generator_contents(generator, *args):
                 content_object.status = 'hidden'
             contents.remove(content_object)
             hidden_contents.append(content_object)
-    if not is_pages_gen: # regenerate categories, tags, etc. for articles
-        if hasattr(generator, '_generate_context_aggregate'):                  # if implemented
-            # Simulate __init__ for fields that need it
-            generator.dates = {}
-            generator.tags = defaultdict(list)
-            generator.categories = defaultdict(list)
-            generator.authors = defaultdict(list)
-            generator._generate_context_aggregate()
-        else:                             # fallback for Pelican 3.3.0
-            regenerate_context_articles(generator)
+    # regenerate categories, tags, etc. for articles if Pelican 3.3.0
+    if not _pretaxonomy_available and not is_pages_gen:
+        regenerate_context_articles(generator)
 
 
 
@@ -188,6 +181,9 @@ def install_templates_translations(generator):
 def register():
     signals.initialized.connect(disable_lang_vars)
     signals.generator_init.connect(install_templates_translations)
-    signals.article_generator_finalized.connect(update_generator_contents)
+    if _pretaxonomy_available:   # for Pelican 3.4 and later
+        signals.article_generator_pretaxonomy.connect(update_generator_contents)
+    else:                                            # for Pelican 3.3
+        signals.article_generator_finalized.connect(update_generator_contents)
     signals.page_generator_finalized.connect(update_generator_contents)
     signals.finalized.connect(create_lang_subsites)

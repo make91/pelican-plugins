@@ -8,11 +8,12 @@ from operator import attrgetter, itemgetter
 def regenerate_context_articles(generator):
     """Helper to regenerate context after modifying articles draft state
 
-    essentially just a copy from pelican.generators.ArticlesGenerator.generate_context
-    after process_translations up to signal sending
+    This is for Pelican version 3.3.0,
+    version 3.4 and later has the article_generator_pretaxonomy signal
 
-    This has to be kept in sync untill a better solution is found
-    This is for Pelican version 3.3.0
+    Essentially just a copy from version 3.3.0 of
+    :meth:`pelican.generators.ArticlesGenerator.generate_context`
+    after process_translations up to finalized signal sending
     """
     # Simulate __init__ for fields that need it
     generator.dates = {}
