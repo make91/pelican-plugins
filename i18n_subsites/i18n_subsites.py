@@ -9,6 +9,7 @@ from itertools import chain
 from collections import defaultdict, OrderedDict
 
 import gettext
+import locale
 
 from pelican import signals
 from pelican.contents import Page, Article
@@ -63,6 +64,7 @@ def create_lang_subsites(pelican_obj):
         _main_site_generated = True
 
     orig_settings = pelican_obj.settings
+    orig_locale = locale.setlocale(locale.LC_ALL)
     for lang, overrides in orig_settings.get('I18N_SUBSITES', {}).items():
         settings = orig_settings.copy()
         settings.update(overrides)
@@ -81,6 +83,8 @@ def create_lang_subsites(pelican_obj):
         pelican_obj = cls(settings)
         logger.debug("Generating i18n subsite for lang '{}' using class '{}'".format(lang, str(cls)))
         pelican_obj.run()
+    # restore original locale for possibly next autorebuild run
+    locale.setlocale(locale.LC_ALL, orig_locale)
     _main_site_generated = False          # for autoreload mode
 
 
