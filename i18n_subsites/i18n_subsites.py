@@ -235,10 +235,15 @@ class SubsitesCreator(object):
         context['extra_siteurls'] = extra_siteurls
 
     def interlink_translations(self, content):
-        '''Link content to translations in their main language'''
+        '''Link content to translations in their main language
+
+        so the URL (including localized month names) of the different subsites
+        will be honored
+        '''
         for translation in content.translations:
             relurl = self.subsite_relurl_db[translation.lang]
-            translation.override_url = urljoin(relurl, translation.url)
+            translation_raw = self.content_db[translation.source_path]
+            translation.override_url = urljoin(relurl, translation_raw.url)
 
     def interlink_static_files(self, generator):
         '''Add links to static files in the main site if necessary'''
