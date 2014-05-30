@@ -4,6 +4,8 @@
 
 This plugin extends the translations functionality by creating internationalized sub-sites for the default site. It is therefore redundant with the *\*_LANG_{SAVE_AS,URL}* variables, so it disables them to prevent conflicts.
 
+This plugin is designed for Pelican 3.4 and later.
+
 What it does
 ============
 1. The *\*_LANG_URL* and *\*_LANG_SAVE_AS* variables are set to their normal counterparts (e.g. *ARTICLE_URL*) so they don't conflict with this scheme.
