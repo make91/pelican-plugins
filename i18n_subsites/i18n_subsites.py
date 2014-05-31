@@ -32,7 +32,7 @@ _GENERATOR_ATTRS = {
     PagesGenerator :
     ['pages', 'hidden_pages', 'hidden', 'translations', 'hidden_translations'],
     }
-_MAIN_SETTINGS = {}   # settings dict of the main Pelican instance
+_MAIN_SETTINGS = None     # settings dict of the main Pelican instance
 _SUBSITE_QUEUE = {}   # map: lang -> settings overrides
 _SITE_DB = {}         # OrderedDict: lang -> siteurl
 _SITE_RELURL_DB = {}  # map: lang -> relpath to siteurl of main site TODO it may not work everywhere
@@ -89,14 +89,14 @@ def initialize_dbs(settings):
 
     This clears the DBs for e.g. autoreload mode to work
     '''
-    _MAIN_SETTINGS.update(settings)
-    _SUBSITE_QUEUE.clear()
-    _SUBSITE_QUEUE.update(settings.get('I18N_SUBSITES', {}).copy())
+    global _MAIN_SETTINGS, _SUBSITE_QUEUE
+    _MAIN_SETTINGS = settings
+    _SUBSITE_QUEUE = settings.get('I18N_SUBSITES', {}).copy()
     # clear databases in case of autoreload mode
     _SUBSITE_DB.clear()
     _SUBSITE_RELURL_DB.clear()
     _CONTENT_DB.clear()
-    _GENERATORS[:] = []                    # clear no available on PY2
+    _GENERATORS[:] = []                    # clear not available on PY2
 
 
 def disable_lang_variables(settings):
@@ -115,7 +115,7 @@ def initialized_handler(pelican_obj):
     """
     settings = pelican_obj.settings
     disable_lang_variables(settings)
-    if _MAIN_SETTINGS == {}:
+    if _MAIN_SETTINGS is None:
         initialize_dbs(settings)
 
 def relative_to_siteurl(url, siteurl=None):
@@ -300,7 +300,7 @@ def create_next_subsite(pelican_obj):
     if len(_SUBSITE_QUEUE) == 0:
         _LOGGER.debug('Updating cross-sub-site links for all generators.')
         update_generators()
-        _MAIN_SETTINGS.clear()             # to initialize next time
+        _MAIN_SETTINGS = None             # to initialize next time
     else:
         with temporary_locale():
             settings = get_next_subsite_settings()
