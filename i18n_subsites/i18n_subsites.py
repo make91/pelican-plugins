@@ -33,9 +33,12 @@ _GENERATOR_ATTRS = {
     ['pages', 'hidden_pages', 'hidden', 'translations', 'hidden_translations'],
     }
 _MAIN_SETTINGS = None     # settings dict of the main Pelican instance
+_MAIN_LANG = None         # lang of the main Pelican instance
+_MAIN_SITEURL = None      # siteurl of the main Pelican instance
+_MAIN_STATIC_FILES = None # list of Static instances the main Pelican instance
 _SUBSITE_QUEUE = {}   # map: lang -> settings overrides
-_SITE_DB = {}         # OrderedDict: lang -> siteurl
-_SITE_RELURL_DB = {}  # map: lang -> relpath to siteurl of main site TODO it may not work everywhere
+_SITE_DB = OrderedDict()           # OrderedDict: lang -> siteurl
+_SITES_RELPATH_DB = {}       # map: (lang, base_lang) -> relpath
 _GENERATORS = []      # list of generators to be updated
 _CONTENT_DB = {}      # map: source_path -> content in its native lang
 _LOGGER = logging.getLogger(__name__)
@@ -89,12 +92,15 @@ def initialize_dbs(settings):
 
     This clears the DBs for e.g. autoreload mode to work
     '''
-    global _MAIN_SETTINGS, _SUBSITE_QUEUE
+    global _MAIN_SETTINGS, _MAIN_SITEURL, _MAIN_LANG, _SUBSITE_QUEUE
     _MAIN_SETTINGS = settings
+    _MAIN_LANG = settings['DEFAULT_LANG']
+    _MAIN_SITEURL = settings['SITEURL']   # TODO if '', what then?
     _SUBSITE_QUEUE = settings.get('I18N_SUBSITES', {}).copy()
     # clear databases in case of autoreload mode
-    _SUBSITE_DB.clear()
-    _SUBSITE_RELURL_DB.clear()
+    _SITE_DB.clear()
+    _SITE_DB[_MAIN_LANG] = _MAIN_SITEURL
+    _SITES_RELPATH_DB.clear()
     _CONTENT_DB.clear()
     _GENERATORS[:] = []                    # clear not available on PY2
 
@@ -118,15 +124,19 @@ def initialized_handler(pelican_obj):
     if _MAIN_SETTINGS is None:
         initialize_dbs(settings)
 
-def relative_to_siteurl(url, siteurl=None):
-    '''Make an absoulte url relative to the given siteurl
 
-    the siteurl of the main site is used if not given
+def relpath_to_site(lang, base_lang):
+    '''Get relative path from siteurl of lang to siteurl of base_lang
+
+    the output is cached in _SITES_RELURL_DB
     '''
-    if siteurl is None:
-        siteurl = main_siteurl
-    parsed = urlparse(url)
-    path = posixpath.relpath(parsed.path, urlparse(siteurl).path)
+    path = _SITES_RELPATH_DB.get((lang, base_lang), None)
+    if path is None:
+        siteurl = _SITE_DB[lang]
+        base_siteurl = _SITE_DB[base_lang]
+        path = posixpath.relpath(urlparse(siteurl).path,
+                             urlparse(base_siteurl).path)
+        _SITES_RELPATH_DB[(lang, base_lang)] = path
     return path
 
 
@@ -154,6 +164,7 @@ def filter_generator_contents(generator):
             contents.remove(content)
             other_contents.append(content)
 
+
 def install_templates_translations(generator):
     '''Install gettext translations in the jinja2.Environment
 
@@ -167,7 +178,7 @@ def install_templates_translations(generator):
             localedir = os.path.join(generator.theme, 'translations')
         current_lang = generator.settings['DEFAULT_LANG']
         if current_lang == generator.settings.get('I18N_TEMPLATES_LANG',
-                                        _MAIN_SETTINGS['DEFAULT_LANG']):
+                                                  _MAIN_LANG):
             translations = gettext.NullTranslations()
         else:
             langs = [current_lang]
@@ -182,27 +193,20 @@ def install_templates_translations(generator):
         newstyle = generator.settings.get('I18N_GETTEXT_NEWSTYLE', True)
         generator.env.install_gettext_translations(translations, newstyle)
 
-def prepare_subsites_iterables():
-    '''Prepare iterable variables to add to template context'''
-    main_site_lang = _MAIN_SETTINGS['DEFAULT_LANG']
-    main_siteurl = _MAIN_SETTINGS['SITEURL']
-    main_siteurl = '/' if main_siteurl == '' else main_siteurl
-    lang_siteurls = list(_SUBSITE_DB.items())
-    lang_siteurls.insert(0, (main_site_lang, main_siteurl))
-    _lang_siteurls = OrderedDict(lang_siteurls)
 
 def add_variables_to_context(generator):
     '''Adds useful iterable variables to template context'''
     context = generator.context             # minimize attr lookup
-    context['_CONTENT_DB'] = _CONTENT_DB
-    context['get_rel_to_siteulr'] = relative_to_siteurl
-    context['main_siteurl'] = main_siteurl
-    context['main_lang'] = main_site_lang
-    context['lang_siteurls'] = _lang_siteurls
+    context['content_db'] = _CONTENT_DB
+    context['relpath_to_site'] = relpath_to_site
+    context['main_siteurl'] = _MAIN_SITEURL
+    context['main_lang'] = _MAIN_LANG
+    context['lang_siteurls'] = _SITE_DB
     current_lang = generator.settings['DEFAULT_LANG']
-    extra_siteurls = _lang_siteurls.copy()
+    extra_siteurls = _SITE_DB.copy()
     extra_siteurls.pop(current_lang)
     context['extra_siteurls'] = extra_siteurls
+
 
 def interlink_translations(content):
     '''Link content to translations in their main language
@@ -210,24 +214,31 @@ def interlink_translations(content):
     so the URL (including localized month names) of the different subsites
     will be honored
     '''
+    lang = content.lang
     for translation in content.translations:
-        relurl = _SUBSITE_RELURL_DB[translation.lang]   # maybe should be content.lang
+        relpath = relpath_to_site(lang, translation.lang)
         translation_raw = _CONTENT_DB[translation.source_path]
-        translation.override_url = urljoin(relurl, translation_raw.url)
+        translation.override_url = urljoin(relpath, translation_raw.url)
+
 
 def interlink_static_files(generator):
     '''Add links to static files in the main site if necessary'''
+    # TODO not always needed - > how to know?
     filenames = generator.context['filenames'] # minimize attr lookup
-    relurl = _SUBSITE_RELURL_DB[generator.settings['DEFAULT_LANG']]
-    for staticfile in main_static_files:
+    relpath = relpath_to_site(generator.settings['DEFAULT_LANG'], _MAIN_LANG)
+    for staticfile in _MAIN_STATIC_FILES:
         if staticfile.source_path not in filenames:
             staticfile = copy(staticfile) # prevent override in main site
-            staticfile.override_url = urljoin(relurl, staticfile.url)
+            staticfile.override_url = urljoin(relpath, staticfile.url)
             filenames[staticfile.source_path] = staticfile
 
+
 def save_main_static_files(static_generator):
-    if static_generator.settings == _MAIN_SETTINGS:
-        main_static_files = static_generator.staticfiles
+    '''Save the static files generated for the main site'''
+    global _MAIN_STATIC_FILES
+    if static_generator.settings is _MAIN_SETTINGS:   # TODO will this work?
+        _MAIN_STATIC_FILES = static_generator.staticfiles
+
 
 def update_generators():
     '''Update the context of all generators
@@ -235,8 +246,6 @@ def update_generators():
     Ads useful variables and translations into the template context
     and interlink translations
     '''
-    prepare_subsites_iterables()
-
     for generator in _GENERATORS:
         contents, other_contents, _ = _get_contents_attrs(generator)
         for content in chain(contents, other_contents):
@@ -245,7 +254,12 @@ def update_generators():
         add_variables_to_context(generator)
         interlink_static_files(generator)
 
+
 def get_next_subsite_settings():
+    '''Get the settings dict for the next subsite
+
+    applies overrides and sets default hierarchy if necessary
+    '''
     settings = _MAIN_SETTINGS.copy()
     lang, overrides = _SUBSITE_QUEUE.popitem()
     settings.update(overrides)
@@ -255,24 +269,22 @@ def get_next_subsite_settings():
 
     # default subsite hierarchy
     if 'SITEURL' not in overrides:
-        main_siteurl = main_siteurl
-        main_siteurl = '/' if main_siteurl == '' else main_siteurl   #TODO make sure it works for both relative and absolute
-        settings['SITEURL'] = main_siteurl + lang
-    siteurl = settings['SITEURL']
-    _SUBSITE_DB[lang] = siteurl
-    _SUBSITE_RELURL_DB[lang] = relative_to_siteurl(siteurl)
+        #TODO make sure it works for both relative and absolute
+        settings['SITEURL'] = _SITE_DB[lang] = urljoin(_MAIN_SITEURL, lang)
     if 'OUTPUT_PATH' not in overrides:
         settings['OUTPUT_PATH'] = os.path.join(
             _MAIN_SETTINGS['OUTPUT_PATH'], lang)
     if 'STATIC_PATHS' not in overrides:
         settings['STATIC_PATHS'] = []
-    if 'THEME' in overrides:
-        settings['THEME_STATIC_DIR'] = urljoin(_SUBSITE_RELURL_DB[lang],
+    if 'THEME' not in overrides:
+        relpath = relpath_to_site(lang, _MAIN_LANG)
+        settings['THEME_STATIC_DIR'] = urljoin(relpath,
                                     _MAIN_SETTINGS['THEME_STATIC_DIR'])
         settings['THEME_STATIC_PATHS'] = []
 
     settings = configure_settings(settings)      # to set LOCALE, etc.
     return settings
+
 
 def get_pelican_cls(settings):
     '''Get the Pelican class requested in settings'''
@@ -297,6 +309,7 @@ def create_next_subsite(pelican_obj):
     a PELICAN_CLASS instance and its run method. Finally, restore the
     previous locale.
     '''
+    global _MAIN_SETTINGS
     if len(_SUBSITE_QUEUE) == 0:
         _LOGGER.debug('Updating cross-sub-site links for all generators.')
         update_generators()
