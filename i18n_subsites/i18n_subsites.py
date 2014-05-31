@@ -40,6 +40,7 @@ _SUBSITE_QUEUE = {}   # map: lang -> settings overrides
 _SITE_DB = OrderedDict()           # OrderedDict: lang -> siteurl
 _SITES_RELPATH_DB = {}       # map: (lang, base_lang) -> relpath
 _GENERATORS = []      # list of generators to be updated
+_GENERATORS_INTERLINK = [] # list of generators to be updated including links
 _CONTENT_DB = {}      # map: source_path -> content in its native lang
 _LOGGER = logging.getLogger(__name__)
 
@@ -105,6 +106,7 @@ def initialize_dbs(settings):
     _SITES_RELPATH_DB.clear()
     _CONTENT_DB.clear()
     _GENERATORS[:] = []                    # clear not available on PY2
+    _GENERATORS_INTERLINK[:] = []
 
 
 def disable_lang_variables(settings):
@@ -142,12 +144,16 @@ def relpath_to_site(lang, target_lang):
     '''
     path = _SITES_RELPATH_DB.get((lang, target_lang), None)
     if path is None:
-        siteurl = _SITE_DB[lang]
-        target_siteurl = _SITE_DB[target_lang]
+        siteurl = _SITE_DB.get(lang, _MAIN_SITEURL)
+        target_siteurl = _SITE_DB.get(target_lang, _MAIN_SITEURL)
         path = posixpath.relpath(get_site_path(target_siteurl),
                                  get_site_path(siteurl))
         _SITES_RELPATH_DB[(lang, target_lang)] = path
     return path
+
+def save_generator(generator):
+    '''Save the generator for later use'''
+    _GENERATORS.append(generator)
 
 
 def filter_generator_contents(generator):
@@ -161,7 +167,7 @@ def filter_generator_contents(generator):
     HIDE_UNTRANSLATED_CONTENT is True
     """
     _set_translations_attrs(generator, [], [])
-    _GENERATORS.append(generator)
+    _GENERATORS_INTERLINK.append(generator)
 
     hide_untrans = generator.settings.get('HIDE_UNTRANSLATED_CONTENT', True)
     contents, other_contents, status = _get_contents_attrs(generator)
@@ -257,9 +263,10 @@ def update_generators():
     and interlink translations
     '''
     for generator in _GENERATORS:
-        contents, other_contents, _ = _get_contents_attrs(generator)
-        for content in chain(contents, other_contents):
-            interlink_translations(content)
+        if generator in _GENERATORS_INTERLINK:
+            contents, other_contents, _ = _get_contents_attrs(generator)
+            for content in chain(contents, other_contents):
+                interlink_translations(content)
         install_templates_translations(generator)
         add_variables_to_context(generator)
         interlink_static_files(generator)   # TODO too late, articles have their own context it seems
@@ -342,6 +349,7 @@ _SIGNAL_HANDLERS_DB = {'initialized': initialized_handler,
     'page_generator_finalized': filter_generator_contents,
     'get_writer': create_next_subsite,
     'static_generator_finalized': save_main_static_files,
+    'generator_init': save_generator,
 }
 
 
