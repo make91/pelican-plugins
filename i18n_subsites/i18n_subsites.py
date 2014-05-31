@@ -287,7 +287,8 @@ def get_next_subsite_settings():
     # default subsite hierarchy
     if 'SITEURL' not in overrides:
         #TODO make sure it works for both relative and absolute
-        settings['SITEURL'] = _SITE_DB[lang] = posixpath.join(_MAIN_SITEURL, lang)
+        settings['SITEURL'] = posixpath.join(_MAIN_SITEURL, lang)
+    _SITE_DB[lang] = settings['SITEURL']
     if 'OUTPUT_PATH' not in overrides:
         settings['OUTPUT_PATH'] = os.path.join(
             _MAIN_SETTINGS['OUTPUT_PATH'], lang)
