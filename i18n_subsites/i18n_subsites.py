@@ -7,9 +7,9 @@ This plugin is designed for Pelican 3.4 and later
 import os
 import six
 import logging
+import posixpath
 
 from copy import copy
-from posixpath import relpath, normpath, join
 from itertools import chain
 from collections import OrderedDict
 from contextlib import contextmanager
@@ -132,7 +132,7 @@ def get_site_path(url):
 
     also normalizes '' to '.' for relpath to work
     '''
-    return normpath(urlparse(url).path)
+    return posixpath.normpath(urlparse(url).path)
 
 
 def relpath_to_site(lang, target_lang):
@@ -144,7 +144,8 @@ def relpath_to_site(lang, target_lang):
     if path is None:
         siteurl = _SITE_DB[lang]
         target_siteurl = _SITE_DB[target_lang]
-        path = relpath(get_site_path(target_siteurl), get_site_path(siteurl))
+        path = posixpath.relpath(get_site_path(target_siteurl),
+                                 get_site_path(siteurl))
         _SITES_RELPATH_DB[(lang, target_lang)] = path
     return path
 
@@ -227,7 +228,7 @@ def interlink_translations(content):
     for translation in content.translations:
         relpath = relpath_to_site(lang, translation.lang)
         translation_raw = _CONTENT_DB[translation.source_path]
-        translation.override_url = join(relpath, translation_raw.url)
+        translation.override_url = posixpath.join(relpath, translation_raw.url)
 
 
 def interlink_static_files(generator):
@@ -238,7 +239,7 @@ def interlink_static_files(generator):
     for staticfile in _MAIN_STATIC_FILES:
         if staticfile.source_path not in filenames:
             staticfile = copy(staticfile) # prevent override in main site
-            staticfile.override_url = join(relpath, staticfile.url)
+            staticfile.override_url = posixpath.join(relpath, staticfile.url)
             filenames[staticfile.source_path] = staticfile
 
 
@@ -279,7 +280,7 @@ def get_next_subsite_settings():
     # default subsite hierarchy
     if 'SITEURL' not in overrides:
         #TODO make sure it works for both relative and absolute
-        settings['SITEURL'] = _SITE_DB[lang] = join(_MAIN_SITEURL, lang)
+        settings['SITEURL'] = _SITE_DB[lang] = posixpath.join(_MAIN_SITEURL, lang)
     if 'OUTPUT_PATH' not in overrides:
         settings['OUTPUT_PATH'] = os.path.join(
             _MAIN_SETTINGS['OUTPUT_PATH'], lang)
@@ -287,7 +288,7 @@ def get_next_subsite_settings():
         settings['STATIC_PATHS'] = []
     if 'THEME' not in overrides:
         relpath = relpath_to_site(lang, _MAIN_LANG)
-        settings['THEME_STATIC_DIR'] = join(relpath,
+        settings['THEME_STATIC_DIR'] = posixpath.join(relpath,
                                     _MAIN_SETTINGS['THEME_STATIC_DIR'])
         settings['THEME_STATIC_PATHS'] = []
 
