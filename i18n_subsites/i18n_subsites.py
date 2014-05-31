@@ -7,13 +7,13 @@ This plugin is designed for Pelican 3.4 and later
 import os
 import six
 import logging
-import posixpath
 
 from copy import copy
+from posixpath import relpath, normpath, join
 from itertools import chain
 from collections import OrderedDict
 from contextlib import contextmanager
-from six.moves.urllib.parse import urlparse, urljoin
+from six.moves.urllib.parse import urlparse
 
 import gettext
 import locale
@@ -96,6 +96,8 @@ def initialize_dbs(settings):
     _MAIN_SETTINGS = settings
     _MAIN_LANG = settings['DEFAULT_LANG']
     _MAIN_SITEURL = settings['SITEURL']   # TODO if '', what then?
+    if _MAIN_SITEURL == '':
+        _MAIN_SITEURL = '/'
     _SUBSITE_QUEUE = settings.get('I18N_SUBSITES', {}).copy()
     # clear databases in case of autoreload mode
     _SITE_DB.clear()
@@ -125,18 +127,25 @@ def initialized_handler(pelican_obj):
         initialize_dbs(settings)
 
 
-def relpath_to_site(lang, base_lang):
+def get_site_path(url):
+    '''Get the path component of an url, excludes siteurl
+
+    also normalizes '' to '.' for relpath to work
+    '''
+    return normpath(urlparse(url).path)
+
+
+def relpath_to_site(lang, target_lang):
     '''Get relative path from siteurl of lang to siteurl of base_lang
 
     the output is cached in _SITES_RELURL_DB
     '''
-    path = _SITES_RELPATH_DB.get((lang, base_lang), None)
+    path = _SITES_RELPATH_DB.get((lang, target_lang), None)
     if path is None:
         siteurl = _SITE_DB[lang]
-        base_siteurl = _SITE_DB[base_lang]
-        path = posixpath.relpath(urlparse(siteurl).path,
-                             urlparse(base_siteurl).path)
-        _SITES_RELPATH_DB[(lang, base_lang)] = path
+        target_siteurl = _SITE_DB[target_lang]
+        path = relpath(get_site_path(target_siteurl), get_site_path(siteurl))
+        _SITES_RELPATH_DB[(lang, target_lang)] = path
     return path
 
 
@@ -218,7 +227,7 @@ def interlink_translations(content):
     for translation in content.translations:
         relpath = relpath_to_site(lang, translation.lang)
         translation_raw = _CONTENT_DB[translation.source_path]
-        translation.override_url = urljoin(relpath, translation_raw.url)
+        translation.override_url = join(relpath, translation_raw.url)
 
 
 def interlink_static_files(generator):
@@ -229,7 +238,7 @@ def interlink_static_files(generator):
     for staticfile in _MAIN_STATIC_FILES:
         if staticfile.source_path not in filenames:
             staticfile = copy(staticfile) # prevent override in main site
-            staticfile.override_url = urljoin(relpath, staticfile.url)
+            staticfile.override_url = join(relpath, staticfile.url)
             filenames[staticfile.source_path] = staticfile
 
 
@@ -252,7 +261,7 @@ def update_generators():
             interlink_translations(content)
         install_templates_translations(generator)
         add_variables_to_context(generator)
-        interlink_static_files(generator)
+        interlink_static_files(generator)   # TODO too late, articles have their own context it seems
 
 
 def get_next_subsite_settings():
@@ -270,7 +279,7 @@ def get_next_subsite_settings():
     # default subsite hierarchy
     if 'SITEURL' not in overrides:
         #TODO make sure it works for both relative and absolute
-        settings['SITEURL'] = _SITE_DB[lang] = urljoin(_MAIN_SITEURL, lang)
+        settings['SITEURL'] = _SITE_DB[lang] = join(_MAIN_SITEURL, lang)
     if 'OUTPUT_PATH' not in overrides:
         settings['OUTPUT_PATH'] = os.path.join(
             _MAIN_SETTINGS['OUTPUT_PATH'], lang)
@@ -278,7 +287,7 @@ def get_next_subsite_settings():
         settings['STATIC_PATHS'] = []
     if 'THEME' not in overrides:
         relpath = relpath_to_site(lang, _MAIN_LANG)
-        settings['THEME_STATIC_DIR'] = urljoin(relpath,
+        settings['THEME_STATIC_DIR'] = join(relpath,
                                     _MAIN_SETTINGS['THEME_STATIC_DIR'])
         settings['THEME_STATIC_PATHS'] = []
 
@@ -311,7 +320,7 @@ def create_next_subsite(pelican_obj):
     '''
     global _MAIN_SETTINGS
     if len(_SUBSITE_QUEUE) == 0:
-        _LOGGER.debug('Updating cross-sub-site links for all generators.')
+        _LOGGER.debug('Updating cross-site links for all generators.')
         update_generators()
         _MAIN_SETTINGS = None             # to initialize next time
     else:
