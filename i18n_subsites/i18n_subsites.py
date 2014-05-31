@@ -243,10 +243,10 @@ def interlink_static_files(generator):
     filenames = generator.context['filenames'] # minimize attr lookup
     relpath = relpath_to_site(generator.settings['DEFAULT_LANG'], _MAIN_LANG)
     for staticfile in _MAIN_STATIC_FILES:
-        if staticfile.source_path not in filenames:
+        if staticfile.get_relative_source_path() not in filenames:
             staticfile = copy(staticfile) # prevent override in main site
             staticfile.override_url = posixpath.join(relpath, staticfile.url)
-            filenames[staticfile.source_path] = staticfile
+            generator.add_source_path(staticfile)
 
 
 def save_main_static_files(static_generator):
