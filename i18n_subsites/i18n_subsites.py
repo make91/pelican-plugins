@@ -98,8 +98,6 @@ def initialize_dbs(settings):
     _MAIN_SETTINGS = settings
     _MAIN_LANG = settings['DEFAULT_LANG']
     _MAIN_SITEURL = settings['SITEURL']   # TODO if '', what then?
-    if _MAIN_SITEURL == '':
-        _MAIN_SITEURL = '/'
     _SUBSITE_QUEUE = settings.get('I18N_SUBSITES', {}).copy()
     # clear databases in case of autoreload mode
     _SITE_DB.clear()
@@ -133,9 +131,13 @@ def initialized_handler(pelican_obj):
 def get_site_path(url):
     '''Get the path component of an url, excludes siteurl
 
-    also normalizes '' to '.' for relpath to work
+    also normalizes '' to '/' for relpath to work,
+    otherwise it could be interpreted as a relative filesystem path
     '''
-    return posixpath.normpath(urlparse(url).path)
+    path = urlparse(url).path
+    if path == '':
+        path = '/'
+    return path
 
 
 def relpath_to_site(lang, target_lang):
@@ -145,7 +147,7 @@ def relpath_to_site(lang, target_lang):
     '''
     path = _SITES_RELPATH_DB.get((lang, target_lang), None)
     if path is None:
-        siteurl = _SITE_DB.get(lang, _MAIN_SITEURL)
+        siteurl = _SITE_DB.get(lang, _MAIN_SITEURL)   # TODO saner default
         target_siteurl = _SITE_DB.get(target_lang, _MAIN_SITEURL)
         path = posixpath.relpath(get_site_path(target_siteurl),
                                  get_site_path(siteurl))
@@ -288,7 +290,8 @@ def get_next_subsite_settings():
     # default subsite hierarchy
     if 'SITEURL' not in overrides:
         #TODO make sure it works for both relative and absolute
-        settings['SITEURL'] = posixpath.join(_MAIN_SITEURL, lang)
+        main_siteurl = '/' if _MAIN_SITEURL == '' else _MAIN_SITEURL
+        settings['SITEURL'] = posixpath.join(main_siteurl, lang)
     _SITE_DB[lang] = settings['SITEURL']
     if 'OUTPUT_PATH' not in overrides:
         settings['OUTPUT_PATH'] = os.path.join(
