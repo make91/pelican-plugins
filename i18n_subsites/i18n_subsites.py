@@ -64,9 +64,9 @@ def _get_known_attrs_names(generator):
     clss = set(generator.__class__.__mro__).intersection(
         _GENERATOR_ATTRS.keys())
     if len(clss) > 1:
-        _LOGGER.warning(('Ambiguous class mro {} for {}, using class {} '
+        _LOGGER.warning(('Ambiguous class mro {} for {}, using first class '
                         'information to access attributes').format(
-                            generator.__mro__, generator, cls))
+                            generator.__mro__, generator))
     if len(clss) != 0:
         cls = clss.pop()
     else:
