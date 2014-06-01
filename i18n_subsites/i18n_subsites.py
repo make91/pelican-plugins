@@ -63,16 +63,16 @@ def _get_known_attrs_names(generator):
     '''Get relevant attribute names known for the generator class'''
     clss = set(generator.__class__.__mro__).intersection(
         _GENERATOR_ATTRS.keys())
+    if len(clss) > 1:
+        _LOGGER.warning(('Ambiguous class mro {} for {}, using class {} '
+                        'information to access attributes').format(
+                            generator.__mro__, generator, cls))
     if len(clss) != 0:
         cls = clss.pop()
     else:
         raise TypeError(('Class {} of generator {} is not supported by the '
                         'i18n_subsites plugin (relevant attribute names '
                         'are not known)').format(type(generator), generator))
-    if len(clss) > 1:
-        _LOGGER.warning(('Ambiguous class mro {} for {}, using class {} '
-                        'information to access attributes').format(
-                            generator.__mro__, generator, cls))
     return _GENERATOR_ATTRS[cls]
 
 

@@ -2,7 +2,7 @@
 
 import unittest
 import i18n_subsites.i18n_subsites as i18ns
-from pelican.generators import ArticlesGenerator
+from pelican.generators import ArticlesGenerator, PagesGenerator
 from pelican.tests.support import get_settings
 from pelican import Pelican
 
@@ -39,7 +39,7 @@ class TestGeneratorAttrs(unittest.TestCase):
 
     def test_get_attr_names(self):
         '''Test that the right attr names are returned for the generator'''
-        self.assertEqual(i18ns._get_known_attrs_names(self.generator),
+        self.assertIs(i18ns._get_known_attrs_names(self.generator),
                          i18ns._GENERATOR_ATTRS[ArticlesGenerator])
 
     def test_get_attr_names_wrong_generator(self):
@@ -49,6 +49,17 @@ class TestGeneratorAttrs(unittest.TestCase):
             'supported by the i18n_subsites plugin \(relevant attribute names are '
             'not known\)'),
                                i18ns._get_known_attrs_names, object())
+
+    def test_get_attr_names_mixed_generator(self):
+        '''Test that it works even with mixed generators'''
+        class MixedGenerator(ArticlesGenerator, PagesGenerator):
+            pass
+        mixed_generator = MixedGenerator(context={}, settings=get_settings(),
+                                        path=None, theme='', output_path=None)
+        self.assertIs(i18ns._get_known_attrs_names(self.generator),
+                         i18ns._GENERATOR_ATTRS[ArticlesGenerator])
+        
+        
 
     def test_get_attrs(self):
         '''Test that the correct attributes are returned'''
