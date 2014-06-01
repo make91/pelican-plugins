@@ -143,7 +143,7 @@ def get_site_path(url):
 def relpath_to_site(lang, target_lang):
     '''Get relative path from siteurl of lang to siteurl of base_lang
 
-    the output is cached in _SITES_RELURL_DB
+    the output is cached in _SITES_RELPATH_DB
     '''
     path = _SITES_RELPATH_DB.get((lang, target_lang), None)
     if path is None:
