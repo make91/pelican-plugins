@@ -208,7 +208,7 @@ class GeneratorInspector(object):
 
     def untranslated_policy(self, default):
         '''Get the policy for untranslated content'''
-        return self.generator.settings.get(self.generators_info.get(
+        return self.generator.settings.get(self.structure.get(
             'policy', None), default)
 
     def all_contents(self):
