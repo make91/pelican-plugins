@@ -21,17 +21,10 @@ import locale
 from pelican import signals
 from pelican.generators import ArticlesGenerator, PagesGenerator
 from pelican.settings import configure_settings
+from pelican.contents import Draft
 
 
 # Global vars
-# map: generator_type -> [contents, other_contents, other_status, translations,
-# other_translations]
-_GENERATOR_ATTRS = {
-    ArticlesGenerator :
-    ['articles', 'drafts', 'draft', 'translations', 'drafts_translations'],
-    PagesGenerator :
-    ['pages', 'hidden_pages', 'hidden', 'translations', 'hidden_translations'],
-    }
 _MAIN_SETTINGS = None     # settings dict of the main Pelican instance
 _MAIN_LANG = None         # lang of the main Pelican instance
 _MAIN_SITEURL = None      # siteurl of the main Pelican instance
@@ -39,9 +32,9 @@ _MAIN_STATIC_FILES = None # list of Static instances the main Pelican instance
 _SUBSITE_QUEUE = {}   # map: lang -> settings overrides
 _SITE_DB = OrderedDict()           # OrderedDict: lang -> siteurl
 _SITES_RELPATH_DB = {}       # map: (lang, base_lang) -> relpath
-_GENERATORS = []      # list of generators to be updated
-_GENERATORS_INTERLINK = [] # list of generators to be updated including links
-_CONTENT_DB = {}      # map: source_path -> content in its native lang
+# map: generator -> list of removed contents that need interlinking
+_GENERATOR_DB = {}
+_NATIVE_CONTENT_URL_DB = {} # map: source_path -> content in its native lang
 _LOGGER = logging.getLogger(__name__)
 
 
@@ -59,36 +52,6 @@ def temporary_locale(temp_locale=None):
     locale.setlocale(locale.LC_ALL, orig_locale)
 
 
-def _get_known_attrs_names(generator):
-    '''Get relevant attribute names known for the generator class'''
-    clss = set(generator.__class__.__mro__).intersection(
-        _GENERATOR_ATTRS.keys())
-    if len(clss) > 1:
-        _LOGGER.warning(('Ambiguous class mro {} for {}, using first class '
-                        'information to access attributes').format(
-                            generator.__mro__, generator))
-    if len(clss) != 0:
-        cls = clss.pop()
-    else:
-        raise TypeError(('Class {} of generator {} is not supported by the '
-                        'i18n_subsites plugin (relevant attribute names '
-                        'are not known)').format(type(generator), generator))
-    return _GENERATOR_ATTRS[cls]
-
-
-def _get_contents_attrs(generator):
-    '''Get the relevant contents attributes from the generator'''
-    attrs = _get_known_attrs_names(generator)
-    return getattr(generator, attrs[0]), getattr(generator, attrs[1]), attrs[2]
-
-
-def _set_translations_attrs(generator, translations, other_translations):
-    '''Set the relevant translations attributes of the generator'''
-    attrs = _get_known_attrs_names(generator)
-    setattr(generator, attrs[3], translations)
-    setattr(generator, attrs[4], other_translations)
-
-
 def initialize_dbs(settings):
     '''Initialize internal DBs using the Pelican settings dict
 
@@ -99,34 +62,52 @@ def initialize_dbs(settings):
     _MAIN_LANG = settings['DEFAULT_LANG']
     _MAIN_SITEURL = settings['SITEURL']   # TODO if '', what then?
     _SUBSITE_QUEUE = settings.get('I18N_SUBSITES', {}).copy()
+    prepare_site_db_and_overrides()
     # clear databases in case of autoreload mode
+    _SITES_RELPATH_DB.clear()
+    _NATIVE_CONTENT_URL_DB.clear()
+    _GENERATOR_DB.clear()
+
+
+def prepare_site_db_and_overrides():
+    '''Prepare overrides and create _SITE_DB
+
+    _SITE_DB.keys() need to be ready for filter_translations
+    '''
     _SITE_DB.clear()
     _SITE_DB[_MAIN_LANG] = _MAIN_SITEURL
-    _SITES_RELPATH_DB.clear()
-    _CONTENT_DB.clear()
-    _GENERATORS[:] = []                    # clear not available on PY2
-    _GENERATORS_INTERLINK[:] = []
+    #TODO make sure it works for both relative and absolute
+    main_siteurl = '/' if _MAIN_SITEURL == '' else _MAIN_SITEURL
+    for lang, overrides in _SUBSITE_QUEUE.items():
+        if 'SITEURL' not in overrides:
+            overrides['SITEURL'] = posixpath.join(main_siteurl, lang)
+        _SITE_DB[lang] = overrides['SITEURL']
+        # default subsite hierarchy
+        if 'OUTPUT_PATH' not in overrides:
+            overrides['OUTPUT_PATH'] = os.path.join(
+                _MAIN_SETTINGS['OUTPUT_PATH'], lang)
+        if 'STATIC_PATHS' not in overrides:
+            overrides['STATIC_PATHS'] = []
+        if ('THEME' not in overrides and 'THEME_STATIC_DIR' not in overrides and
+                'THEME_STATIC_PATHS' not in overrides):
+            relpath = relpath_to_site(lang, _MAIN_LANG)
+            overrides['THEME_STATIC_DIR'] = posixpath.join(
+                relpath, _MAIN_SETTINGS['THEME_STATIC_DIR'])
+            overrides['THEME_STATIC_PATHS'] = []
+        # to change what is perceived as translations
+        overrides['DEFAULT_LANG'] = lang
 
 
-def disable_lang_variables(settings):
-    '''Disable lang specific url and save_as variables for articles, pages
-
-    e.g. ARTICLE_LANG_URL = ARTICLE_URL
-    They would conflict with this plugin otherwise.
-    '''
-    for content in ['ARTICLE', 'PAGE']:
-        for meta in ['_URL', '_SAVE_AS']:
-            settings[content + '_LANG' + meta] = settings[content + meta]
-
+def subscribe_filter_to_signals(settings):
+    '''Subscribe content filter to requested signals'''
+    for sig in settings.get('I18N_FILTER_SIGNALS', []):
+        sig.connect(filter_contents_translations)
 
 def initialized_handler(pelican_obj):
-    """Initialize plugin variables and Pelican settings
-    """
-    settings = pelican_obj.settings
-    disable_lang_variables(settings)
+    '''Initialize plugin variables and Pelican settings'''
     if _MAIN_SETTINGS is None:
-        initialize_dbs(settings)
-
+        initialize_dbs(pelican_obj.settings)
+        subscribe_filter_to_signals(pelican_obj.settings)
 
 def get_site_path(url):
     '''Get the path component of an url, excludes siteurl
@@ -154,34 +135,124 @@ def relpath_to_site(lang, target_lang):
         _SITES_RELPATH_DB[(lang, target_lang)] = path
     return path
 
+
 def save_generator(generator):
-    '''Save the generator for later use'''
-    _GENERATORS.append(generator)
+    '''Save the generator for later use
+
+    initialize the removed content list
+    '''
+    _GENERATOR_DB[generator] = []
 
 
-def filter_generator_contents(generator):
-    """Filter the contents lists of a generator
+def article2draft(article):
+    '''Transform an Article to Draft'''
+    draft = Draft(article._content, article.metadata, article.settings,
+                  article.source_path, article._context)
+    draft.status = 'draft'
+    return draft
 
-    Empty the (other_)translations attribute of the generator to
-    prevent generating the translations as they will be generated in
-    lang sub-sites.
 
-    Hide content without a translation for current DEFAULT_LANG if
-    HIDE_UNTRANSLATED_CONTENT is True
-    """
-    _set_translations_attrs(generator, [], [])
-    _GENERATORS_INTERLINK.append(generator)
+class GeneratorInspector(object):
+    '''Inspector of generator instances'''
 
-    hide_untrans = generator.settings.get('HIDE_UNTRANSLATED_CONTENT', True)
-    contents, other_contents, status = _get_contents_attrs(generator)
+    generators_info = {
+        ArticlesGenerator: {
+            'translations_lists': ['translations', 'drafts_translations'],
+            'contents_lists': [('articles', 'drafts')],
+            'hiding_func': article2draft,
+            'policy': 'I18N_UNTRANSLATED_ARTICLES',
+        },
+        PagesGenerator: {
+            'translations': ['translations', 'hidden_translations'],
+            'contents_lists': [('pages', 'hidden_pages')],
+            'hiding_func': 'hidden',
+            'policy': 'I18N_UNTRANSLATED_PAGES',
+        },
+    }
+
+    def __init__(self, generator):
+        '''Identify the best known class of the generator instance
+
+        The class '''
+        self.generator = generator
+        self.generators_info.update(generator.settings.get(
+            'I18N_GENERATORS_INFO', {}))
+        for cls in generator.__class__.__mro__:
+            if cls in self.generators_info:
+                self.structure = self.generators_info[cls]
+                break
+        else:
+            self.structure = {}
+
+    def translations_lists(self):
+        '''Iterator over lists of content translations'''
+        return (getattr(self.generator, name) for name in
+                self.structure.get('translations_lists', []))
+
+    def contents_list_pairs(self):
+        '''Iterator over pairs of normal and hidden contents'''
+        return (tuple(getattr(self.generator, name) for name in names)
+                for names in self.structure.get('contents_lists', []))
+
+    def hiding_function(self):
+        '''Function for transforming content to a hidden version'''
+        hiding_func = self.structure.get('hiding_func', lambda x: x)
+        if isinstance(hiding_func, six.string_types):
+            def hiding_func_(content):
+                '''Set the status of the content to {}'''.format(hiding_func)
+                content.status = hiding_func
+                return content
+            return hiding_func_
+        else:
+            return hiding_func
+
+    def untranslated_policy(self, default):
+        '''Get the policy for untranslated content'''
+        return self.generator.settings.get(self.generators_info.get(
+            'policy', None), default)
+
+    def all_contents(self):
+        '''Iterator over all contents'''
+        translations_iterator = chain(*self.translations_lists())
+        return chain(translations_iterator,
+                     *(pair[i] for pair in self.contents_list_pairs()
+                       for i in (0, 1)))
+
+
+def filter_contents_translations(generator):
+    '''Filter the content and translations lists of a generator
+
+    Filters out
+        1) translations which will be generated in a different site
+        2) content that is not in the language of the currently
+        generated site but in that of a different site, content in a
+        language which has no site is generated always. The filtering
+        method bay be modified by the respective untranslated policy
+    '''
+    inspector = GeneratorInspector(generator)
     current_lang = generator.settings['DEFAULT_LANG']
-    for content in contents[:]:   # loop over copy for removing
-        if content.lang == current_lang:
-            _CONTENT_DB[content.source_path] = content
-        elif hide_untrans:
-            content.status = status
-            contents.remove(content)
-            other_contents.append(content)
+    langs_with_sites = _SITE_DB.keys()
+    removed_contents = _GENERATOR_DB[generator]
+
+    for translations in inspector.translations_lists():
+        for translation in translations[:]:    # copy to be able to remove
+            if translation.lang in langs_with_sites:
+                translations.remove(translation)
+                removed_contents.append(translation)
+
+    hiding_func = inspector.hiding_function()
+    untrans_policy = inspector.untranslated_policy(default='hide')
+    for (contents, other_contents) in inspector.contents_list_pairs():
+        for content in contents[:]:        # copy for removing in loop
+            if content.lang == current_lang: # in native lang
+                # save the native URL attr formatted in the current locale
+                _NATIVE_CONTENT_URL_DB[content.source_path] = content.url
+            elif content.lang in langs_with_sites and untrans_policy != 'keep':
+                contents.remove(content)
+                if untrans_policy == 'hide':
+                    other_contents.append(hiding_func(content))
+                elif untrans_policy == 'remove':   # TODO name
+                    removed_contents.append(content)
 
 
 def install_templates_translations(generator):
@@ -204,8 +275,8 @@ def install_templates_translations(generator):
             try:
                 translations = gettext.translation(domain, localedir, langs)
             except (IOError, OSError):
-                _LOGGER.error(
-                ("Cannot find translations for language '{}' in '{}' with "
+                _LOGGER.error((
+                    "Cannot find translations for language '{}' in '{}' with "
                     "domain '{}'. Installing NullTranslations.").format(
                         langs[0], localedir, domain))
                 translations = gettext.NullTranslations()
@@ -216,7 +287,6 @@ def install_templates_translations(generator):
 def add_variables_to_context(generator):
     '''Adds useful iterable variables to template context'''
     context = generator.context             # minimize attr lookup
-    context['content_db'] = _CONTENT_DB
     context['relpath_to_site'] = relpath_to_site
     context['main_siteurl'] = _MAIN_SITEURL
     context['main_lang'] = _MAIN_LANG
@@ -236,13 +306,35 @@ def interlink_translations(content):
     lang = content.lang
     for translation in content.translations:
         relpath = relpath_to_site(lang, translation.lang)
-        translation_raw = _CONTENT_DB[translation.source_path]
-        translation.override_url = posixpath.join(relpath, translation_raw.url)
+        url = _NATIVE_CONTENT_URL_DB[translation.source_path]
+        translation.override_url = posixpath.join(relpath, url)
+
+
+def interlink_translated_content(generator):
+    '''Make translations link to the native locations
+
+    for generators that may contain translated content
+    '''
+    inspector = GeneratorInspector(generator)
+    for content in inspector.all_contents():
+        interlink_translations(content)
+
+
+def interlink_removed_content(generator):
+    '''For all contents removed form generation queue update interlinks
+
+    link to the native location
+    '''
+    for content in _GENERATOR_DB[generator]:
+        url = _NATIVE_CONTENT_URL_DB[content.source_path]
+        content.override_url = url
 
 
 def interlink_static_files(generator):
     '''Add links to static files in the main site if necessary'''
     # TODO not always needed - > how to know?
+    if generator.settings['STATIC_PATHS'] != []:
+        return                               # customized STATIC_PATHS
     filenames = generator.context['filenames'] # minimize attr lookup
     relpath = relpath_to_site(generator.settings['DEFAULT_LANG'], _MAIN_LANG)
     for staticfile in _MAIN_STATIC_FILES:
@@ -265,47 +357,13 @@ def update_generators():
     Ads useful variables and translations into the template context
     and interlink translations
     '''
-    for generator in _GENERATORS:
-        if generator in _GENERATORS_INTERLINK:
-            contents, other_contents, _ = _get_contents_attrs(generator)
-            for content in chain(contents, other_contents):
-                interlink_translations(content)
+    for generator in _GENERATOR_DB.keys():
         install_templates_translations(generator)
         add_variables_to_context(generator)
-        interlink_static_files(generator)   # TODO too late, articles have their own context it seems
-
-
-def get_next_subsite_settings():
-    '''Get the settings dict for the next subsite
-
-    applies overrides and sets default hierarchy if necessary
-    '''
-    settings = _MAIN_SETTINGS.copy()
-    lang, overrides = _SUBSITE_QUEUE.popitem()
-    settings.update(overrides)
-
-    # to change what is perceived as translations
-    settings['DEFAULT_LANG'] = lang
-
-    # default subsite hierarchy
-    if 'SITEURL' not in overrides:
-        #TODO make sure it works for both relative and absolute
-        main_siteurl = '/' if _MAIN_SITEURL == '' else _MAIN_SITEURL
-        settings['SITEURL'] = posixpath.join(main_siteurl, lang)
-    _SITE_DB[lang] = settings['SITEURL']
-    if 'OUTPUT_PATH' not in overrides:
-        settings['OUTPUT_PATH'] = os.path.join(
-            _MAIN_SETTINGS['OUTPUT_PATH'], lang)
-    if 'STATIC_PATHS' not in overrides:
-        settings['STATIC_PATHS'] = []
-    if 'THEME' not in overrides:
-        relpath = relpath_to_site(lang, _MAIN_LANG)
-        settings['THEME_STATIC_DIR'] = posixpath.join(relpath,
-                                    _MAIN_SETTINGS['THEME_STATIC_DIR'])
-        settings['THEME_STATIC_PATHS'] = []
-
-    settings = configure_settings(settings)      # to set LOCALE, etc.
-    return settings
+         # TODO too late, articles have their own context it seems
+        interlink_static_files(generator)
+        interlink_removed_content(generator)
+        interlink_translated_content(generator)
 
 
 def get_pelican_cls(settings):
@@ -322,36 +380,37 @@ def create_next_subsite(pelican_obj):
     '''Create the next subsite using the lang-specific config
 
     If there are no more subsites in the generation queue, update all
-    the _GENERATORS (interlink translations and add variables and
-    translations to template context). Otherwise get the language and
-    overrides for next the subsite in the queue and apply overrides,
-    append language subpath to SITEURL and OUTPUT_PATH if they are not
-    overriden. Then set DEFAULT_LANG to the language code to change
-    perception of what is translated. Then generate the subsite using
-    a PELICAN_CLASS instance and its run method. Finally, restore the
-    previous locale.
+    the generators (interlink translations and removed content, add
+    variables and translations to template context). Otherwise get the
+    language and overrides for next the subsite in the queue and apply
+    overrides.  Then generate the subsite using a PELICAN_CLASS
+    instance and its run method. Finally, restore the previous locale.
     '''
     global _MAIN_SETTINGS
     if len(_SUBSITE_QUEUE) == 0:
-        _LOGGER.debug('Updating cross-site links for all generators.')
+        _LOGGER.debug(
+            'i18n: Updating cross-site links and context of all generators.')
         update_generators()
         _MAIN_SETTINGS = None             # to initialize next time
     else:
         with temporary_locale():
-            settings = get_next_subsite_settings()
+            settings = _MAIN_SETTINGS.copy()
+            lang, overrides = _SUBSITE_QUEUE.popitem()
+            settings.update(overrides)
+            settings = configure_settings(settings)      # to set LOCALE, etc.
             cls = get_pelican_cls(settings)
 
             new_pelican_obj = cls(settings)
-            _LOGGER.debug(("Generating i18n subsite for lang '{}' "
-                           "using class {}").format(
-                               settings['DEFAULT_LANG'], cls))
+            _LOGGER.debug(("Generating i18n subsite for language '{}' "
+                           "using class {}").format(lang, cls))
             new_pelican_obj.run()
 
 
 # map: signal name -> function name
-_SIGNAL_HANDLERS_DB = {'initialized': initialized_handler,
-    'article_generator_pretaxonomy': filter_generator_contents,
-    'page_generator_finalized': filter_generator_contents,
+_SIGNAL_HANDLERS_DB = {
+    'initialized': initialized_handler,
+    'article_generator_pretaxonomy': filter_contents_translations,
+    'page_generator_finalized': filter_contents_translations,
     'get_writer': create_next_subsite,
     'static_generator_finalized': save_main_static_files,
     'generator_init': save_generator,
@@ -362,9 +421,10 @@ def register():
     '''Register the plugin only if required signals are available'''
     for sig_name in _SIGNAL_HANDLERS_DB.keys():
         if not hasattr(signals, sig_name):
-            _LOGGER.error('The i18n_subsites plugin requires the {} '
-                 'signal available for sure in Pelican 3.4.0 and later, '
-                 'plugin will not be used.'.format(sig_name))
+            _LOGGER.error((
+                'The i18n_subsites plugin requires the {} '
+                'signal available for sure in Pelican 3.4.0 and later, '
+                'plugin will not be used.').format(sig_name))
             return
 
     for sig_name, handler in _SIGNAL_HANDLERS_DB.items():

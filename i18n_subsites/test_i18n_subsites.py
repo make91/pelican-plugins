@@ -1,12 +1,13 @@
 '''Unit tests for the i18n_subsites plugin'''
 
 import unittest
-import i18n_subsites.i18n_subsites as i18ns
+from . import i18n_subsites as i18ns
 from pelican.generators import ArticlesGenerator, PagesGenerator
 from pelican.tests.support import get_settings
 from pelican import Pelican
 
 import locale
+
 
 class TestTemporaryLocale(unittest.TestCase):
     '''Test the temporary locale context manager'''
@@ -25,57 +26,20 @@ class TestTemporaryLocale(unittest.TestCase):
             self.assertEqual(locale.setlocale(locale.LC_ALL), 'C')
 
 
-class TestGeneratorAttrs(unittest.TestCase):
-    '''Test generator attributes getting and setting'''
+class TestGeneratorInspector(unittest.TestCase):
+    '''Test the GeneratorInspector class'''
 
     def setUp(self):
-        '''Prepare a generator instance to test on'''
-        self.generator = ArticlesGenerator(context={}, settings=get_settings(),
-                                           path=None, theme='', output_path=None)
+        '''Prepare a generator and GeneratorInspector instance to test on'''
+        generator = ArticlesGenerator(context={}, settings=get_settings(),
+                                      path=None, theme='',
+                                      output_path=None)
+        self.inspector = i18n.GeneratorInspector(generator)
 
     def tearDown(self):
         '''Delete the generator'''
-        del self.generator
+        del self.inspector
 
-    def test_get_attr_names(self):
-        '''Test that the right attr names are returned for the generator'''
-        self.assertIs(i18ns._get_known_attrs_names(self.generator),
-                         i18ns._GENERATOR_ATTRS[ArticlesGenerator])
-
-    def test_get_attr_names_wrong_generator(self):
-        '''Test that it fails on an unknown generator'''
-        self.assertRaisesRegex(TypeError,
-            ('Class <class \'object\'> of generator <object object at .*> is not '
-            'supported by the i18n_subsites plugin \(relevant attribute names are '
-            'not known\)'),
-                               i18ns._get_known_attrs_names, object())
-
-    def test_get_attr_names_mixed_generator(self):
-        '''Test that it works even with mixed generators'''
-        class MixedGenerator(ArticlesGenerator, PagesGenerator):
-            pass
-        mixed_generator = MixedGenerator(context={}, settings=get_settings(),
-                                        path=None, theme='', output_path=None)
-        self.assertIs(i18ns._get_known_attrs_names(self.generator),
-                         i18ns._GENERATOR_ATTRS[ArticlesGenerator])
-        
-        
-
-    def test_get_attrs(self):
-        '''Test that the correct attributes are returned'''
-        attrs = i18ns._get_contents_attrs(self.generator)
-        attr_names = i18ns._GENERATOR_ATTRS[ArticlesGenerator][:2]
-        for attr_name, attr in zip(attr_names, attrs):
-            attr_gen = getattr(self.generator, attr_name)
-            self.assertIs(attr, attr_gen)
-
-    def test_set_attrs(self):
-        '''Test that the correct attributes are set'''
-        translations = [1, 2]
-        drafts_translations = [3, 4]
-        i18ns._set_translations_attrs(self.generator, translations, drafts_translations)
-        self.assertIs(self.generator.translations, translations)
-        self.assertIs(self.generator.drafts_translations, drafts_translations)
 
 
 class TestSettingsManipulation(unittest.TestCase):
@@ -84,18 +48,6 @@ class TestSettingsManipulation(unittest.TestCase):
     def setUp(self):
         '''Prepare default settings'''
         self.settings = get_settings()
-
-    def test_disable_lang_variables(self):
-        '''Test that *_LANG_* variables are disabled'''
-        i18ns.disable_lang_variables(self.settings)
-        self.assertEqual(self.settings['ARTICLE_LANG_URL'],
-                         self.settings['ARTICLE_URL'])
-        self.assertEqual(self.settings['PAGE_LANG_URL'],
-                         self.settings['PAGE_URL'])
-        self.assertEqual(self.settings['ARTICLE_LANG_SAVE_AS'],
-                         self.settings['ARTICLE_SAVE_AS'])
-        self.assertEqual(self.settings['PAGE_LANG_SAVE_AS'],
-                         self.settings['PAGE_SAVE_AS'])
 
     def test_get_pelican_cls_class(self):
         '''Test that we get class given as an object'''
@@ -132,4 +84,22 @@ class TestSitesRelpath(unittest.TestCase):
         self.assertEqual(i18ns.relpath_to_site('en', 'de'), 'de')
         self.assertEqual(i18ns.relpath_to_site('de', 'en'), '..')
 
+        
+class TestRegistration(unittest.TestCase):
+    '''Test plugin registration'''
+
+    def test_return_on_missing_signal(self):
+        '''Test return on missing required signal'''
+        i18ns._SIGNAL_HANDLERS_DB['tmp_sig'] = None
+        i18ns.register()
+        self.assertNotIn(id(i18ns.save_generator), i18ns.signals.generator_init.receivers)
+
+    def test_registration(self):
+        '''Test registration of all signal handlers'''
+        i18ns.register()
+        for sig_name, handler in i18ns._SIGNAL_HANDLERS_DB.items():
+            sig = getattr(i18ns.signals, sig_name)
+            self.assertIn(id(handler), sig.receivers)
+            # clean up
+            sig.disconnect(handler)
         
