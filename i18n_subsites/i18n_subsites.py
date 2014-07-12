@@ -163,7 +163,7 @@ class GeneratorInspector(object):
             'policy': 'I18N_UNTRANSLATED_ARTICLES',
         },
         PagesGenerator: {
-            'translations': ['translations', 'hidden_translations'],
+            'translations_lists': ['translations', 'hidden_translations'],
             'contents_lists': [('pages', 'hidden_pages')],
             'hiding_func': 'hidden',
             'policy': 'I18N_UNTRANSLATED_PAGES',
