@@ -86,6 +86,9 @@ def prepare_site_db_and_overrides():
         if 'OUTPUT_PATH' not in overrides:
             overrides['OUTPUT_PATH'] = os.path.join(
                 _MAIN_SETTINGS['OUTPUT_PATH'], lang)
+        if 'CACHE_PATH' not in overrides:
+            overrides['CACHE_PATH'] = os.path.join(
+                _MAIN_SETTINGS['CACHE_PATH'], lang)
         if 'STATIC_PATHS' not in overrides:
             overrides['STATIC_PATHS'] = []
         if ('THEME' not in overrides and 'THEME_STATIC_DIR' not in overrides and
