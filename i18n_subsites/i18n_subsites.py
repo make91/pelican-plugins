@@ -179,24 +179,24 @@ class GeneratorInspector(object):
             'I18N_GENERATORS_INFO', {}))
         for cls in generator.__class__.__mro__:
             if cls in self.generators_info:
-                self.structure = self.generators_info[cls]
+                self.info = self.generators_info[cls]
                 break
         else:
-            self.structure = {}
+            self.info = {}
 
     def translations_lists(self):
         '''Iterator over lists of content translations'''
         return (getattr(self.generator, name) for name in
-                self.structure.get('translations_lists', []))
+                self.info.get('translations_lists', []))
 
     def contents_list_pairs(self):
         '''Iterator over pairs of normal and hidden contents'''
         return (tuple(getattr(self.generator, name) for name in names)
-                for names in self.structure.get('contents_lists', []))
+                for names in self.info.get('contents_lists', []))
 
     def hiding_function(self):
         '''Function for transforming content to a hidden version'''
-        hiding_func = self.structure.get('hiding_func', lambda x: x)
+        hiding_func = self.info.get('hiding_func', lambda x: x)
         if isinstance(hiding_func, six.string_types):
             def hiding_func_(content):
                 '''Set the status of the content to {}'''.format(hiding_func)
@@ -208,8 +208,8 @@ class GeneratorInspector(object):
 
     def untranslated_policy(self, default):
         '''Get the policy for untranslated content'''
-        return self.generator.settings.get(self.structure.get(
-            'policy', None), default)
+        return self.generator.settings.get(self.info.get('policy', None),
+                                           default)
 
     def all_contents(self):
         '''Iterator over all contents'''
