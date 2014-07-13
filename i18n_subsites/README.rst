@@ -2,13 +2,12 @@
  I18N Sub-sites Plugin
 ======================
 
-This plugin extends the translations functionality by creating internationalized sub-sites for the default site. It is therefore redundant with the *\*_LANG_{SAVE_AS,URL}* variables, so it disables them to prevent conflicts.
+This plugin extends the translations functionality by creating internationalized sub-sites for the default site. 
 
 This plugin is designed for Pelican 3.4 and later.
 
 What it does
 ============
-1. The *\*_LANG_URL* and *\*_LANG_SAVE_AS* variables are set to their normal counterparts (e.g. *ARTICLE_URL*) so they don't conflict with this scheme.
 2. While building the site for *DEFAULT_LANG* the translations of pages and articles are not generated, but their relations to the original content is kept via links to them.
 3. For each non-default language a "sub-site" with a modified config [#conf]_ is created [#run]_, linking the translations to the originals (if available). The configured language code is appended to the *OUTPUT_PATH* and *SITEURL* of each sub-site. For each sub-site, *DEFAULT_LANG* is changed to the language of the sub-site so that articles in a different language are treated as translations.
 
@@ -33,6 +32,8 @@ For each extra used language code, a language-specific variables overrides dicti
 	    }
 	}
 
+Default overrides
+-----------------
 - The language code is the language identifier used in the *lang* metadata. It is appended to *OUTPUT_PATH* and *SITEURL* of each I18N sub-site.
 - The internationalized config overrides dictionary may specify configuration variable overrides — e.g. a different *LOCALE*, *SITENAME*, *TIMEZONE*, etc. However, it **must not** override *OUTPUT_PATH* and *SITEURL* as they are modified automatically by appending the language code.
 
@@ -61,7 +62,7 @@ This short `howto <./implementing_language_buttons.rst>`_ shows two example impl
 
 Usage notes
 ===========
-- It is **mandatory** to specify *lang* metadata for each article and page as *DEFAULT_LANG* is later changed for each sub-site, so content without *lang* metadata woudl be rendered in every (sub-)site.
+- It is **mandatory** to specify *lang* metadata for each article and page as *DEFAULT_LANG* is later changed for each sub-site, so content without *lang* metadata would be rendered in every (sub-)site.
 - As with the original translations functionality, *slug* metadata is used to group translations. It is therefore often convenient to compensate for this by overriding the content URL (which defaults to slug) using the *URL* and *Save_as* metadata.
 
 Future plans

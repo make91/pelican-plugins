@@ -1,12 +1,15 @@
 '''Unit tests for the i18n_subsites plugin'''
 
+import os
+import locale
 import unittest
+from tempfile import mkdtemp
+from shutil import rmtree
+
 from . import i18n_subsites as i18ns
 from pelican.generators import ArticlesGenerator, PagesGenerator
 from pelican.tests.support import get_settings
 from pelican import Pelican
-
-import locale
 
 
 class TestTemporaryLocale(unittest.TestCase):
@@ -102,4 +105,49 @@ class TestRegistration(unittest.TestCase):
             self.assertIn(id(handler), sig.receivers)
             # clean up
             sig.disconnect(handler)
+        
+
+class TestFullRun(unittest.TestCase):
+    '''Test running Pelican with the Plugin'''
+
+    def setUp(self):
+        '''Create temporary output and cache folders'''
+        self.temp_path = mkdtemp(prefix='pelicantests.')
+        self.temp_cache = mkdtemp(prefix='pelican_cache.')
+
+    def tearDown(self):
+        '''Remove output and cache folders'''
+        rmtree(self.temp_path)
+        rmtree(self.temp_cache)
+        
+    def test_sites_generation(self):
+        '''Test generation of sites with the plugin
+
+        Compare with recorded output via ``git diff``.
+        To generate output for comparison run the command
+        ``pelican -o test_data/output -s test_data/pelicanconf.py \
+        test_data/content``
+        '''
+        base_path = os.path.dirname(os.path.abspath(__file__))
+        base_path = os.path.join(base_path, 'test_data')
+        content_path = os.path.join(base_path, 'content')
+        output_path = os.path.join(base_path, 'output')
+        settings_path = os.path.join(base_path, 'pelicanconf.py')
+        settings = read_settings(path=settings_path, override={
+            'PATH': content_path,
+            'OUTPUT_PATH': self.temp_path,
+            'CACHE_PATH': self.temp_cache,
+            'PLUGINS': [i18ns],
+            }
+        pelican = Pelican(settings)
+        pelican.run()
+
+        # compare output
+        out, err = subprocess.Popen(
+            ['git', 'diff', '--no-ext-diff', '--exit-code', '-w', output_path,
+             self.temp_path], env={'PAGER': ''},
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
+        assert not out, out
+        assert not err, err
+
         

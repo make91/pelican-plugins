@@ -1,0 +1,46 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*- #
+from __future__ import unicode_literals
+
+AUTHOR = 'The Tester'
+SITENAME = 'Testing site'
+SITEURL = 'http://example.com/test'
+
+TIMEZONE = 'Europe/Prague'
+
+DEFAULT_LANG = 'en'
+LOCALE = 'en_US.UTF-8'
+
+# Disable feed generation
+FEED_ALL_ATOM = None
+CATEGORY_FEED_ATOM = None
+TRANSLATION_FEED_ATOM = None
+AUTHOR_FEED_ATOM = None
+AUTHOR_FEED_RSS = None
+
+# Disable unnecessary pages
+CATEGORY_SAVE_AS = ''
+TAG_SAVE_AS = ''
+AUTHOR_SAVE_AS = ''
+ARCHIVES_SAVE_AS = ''
+AUTHORS_SAVE_AS = ''
+CATEGORIES_SAVE_AS = ''
+TAGS_SAVE_AS = ''
+
+PLUGIN_PATHS = ['../../']
+PLUGINS = ['i18n_subsites']
+
+THEME = 'localized_theme'
+JINJA_EXTENSIONS = ['jinja2.ext.i18n']
+
+I18N_SUBSITES = {
+    'de': {
+        'SITENAME': 'Testseite',
+        'AUTHOR': 'Der Tester',
+        'LOCALE': 'de_DE.UTF-8',
+        },
+    }
+
+I18N_UNTRANSLATED_PAGES = 'remove'
+# Uncomment following line if you want document-relative URLs when developing
+#RELATIVE_URLS = True

@@ -324,13 +324,15 @@ def interlink_translated_content(generator):
 
 
 def interlink_removed_content(generator):
-    '''For all contents removed form generation queue update interlinks
+    '''For all contents removed from generation queue update interlinks
 
     link to the native location
     '''
+    current_lang = generator.settings['DEFAULT_LANG']
     for content in _GENERATOR_DB[generator]:
         url = _NATIVE_CONTENT_URL_DB[content.source_path]
-        content.override_url = url
+        relpath = relpath_to_site(current_lang, content.lang)
+        content.override_url = posixpath.join(relpath, url)
 
 
 def interlink_static_files(generator):

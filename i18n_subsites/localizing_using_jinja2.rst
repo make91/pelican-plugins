@@ -6,7 +6,7 @@ Localizing themes with Jinja2
 ---------------------
 
 To enable the |ext| extension in your templates, you must add it to 
-*JINJA_EXTENSIONS* in your Pelican configuration
+``JINJA_EXTENSIONS`` in your Pelican configuration
 
 .. code-block:: python
 
@@ -21,7 +21,7 @@ Then follow the `Jinja2 templating documentation for the I18N plugin <http://jin
 
 For pluralization support, etc. consult the documentation
 
-To enable `newstyle gettext calls <http://jinja.pocoo.org/docs/extensions/#newstyle-gettext>`_ the *I18N_GETTEXT_NEWSTYLE* config variable must be set to ``True`` (default).
+To enable `newstyle gettext calls <http://jinja.pocoo.org/docs/extensions/#newstyle-gettext>`_ the ``I18N_GETTEXT_NEWSTYLE`` config variable must be set to ``True`` (default).
 
 .. |ext| replace:: ``jinja2.ext.i18n``
 
@@ -30,9 +30,9 @@ To enable `newstyle gettext calls <http://jinja.pocoo.org/docs/extensions/#newst
 
 The |ext| extension uses the `Python gettext library <http://docs.python.org/library/gettext.html>`_ for translating strings.
 
-In your Pelican config you can give the path in which to look for translations in the *I18N_GETTEXT_LOCALEDIR* variable. If not given, it is assumed to be the ``translations`` subfolder in the top folder of the theme specified by *THEME*.
+In your Pelican config you can give the path in which to look for translations in the ``I18N_GETTEXT_LOCALEDIR`` variable. If not given, it is assumed to be the ``translations`` subfolder in the top folder of the theme specified by ``THEME``.
 
-The domain of the translations (the name of each translation file is ``domain.mo``) is controlled by the *I18N_GETTEXT_DOMAIN* config variable (defaults to ``messages``).
+The domain of the translations (the name of each translation file is ``domain.mo``) is controlled by the ``I18N_GETTEXT_DOMAIN`` config variable (defaults to ``messages``).
 
 Example
 .......
@@ -52,7 +52,7 @@ With the following in your Pelican settings file
 
 There are many ways to extract translatable strings and create ``gettext`` compatible translations. You can create the ``*.po`` and ``*.mo`` message catalog files yourself, or you can use some helper tool as described in `the Python gettext library tutorial <http://docs.python.org/library/gettext.html#internationalizing-your-programs-and-modules>`_.
 
-You of course don't need to provide a translation for the language in which the templates are written which is assumed to be the original *DEFAULT_LANG*. This can be overridden in the *I18N_TEMPLATES_LANG* variable.
+You of course don't need to provide a translation for the language in which the templates are written which is assumed to be the original ``DEFAULT_LANG``. This can be overridden in the ``I18N_TEMPLATES_LANG`` variable.
 
 Recommended tool: babel
 .......................
@@ -70,7 +70,7 @@ To tell babel to extract translatable strings from the templates create a mappin
 
 .. code-block:: cfg
 
-    [jinja2: ./templates/**.html]
+    [jinja2: templates/**.html]
 
 
 2. Extract translatable strings from templates
