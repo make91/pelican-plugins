@@ -33,14 +33,25 @@ PLUGINS = ['i18n_subsites']
 THEME = 'localized_theme'
 JINJA_EXTENSIONS = ['jinja2.ext.i18n']
 
+from blinker import signal
+tmpsig = signal('tmpsig')
+I18N_FILTER_SIGNALS = [tmpsig]
+
 I18N_SUBSITES = {
     'de': {
         'SITENAME': 'Testseite',
         'AUTHOR': 'Der Tester',
         'LOCALE': 'de_DE.UTF-8',
         },
+    'cz': {
+        'SITENAME': 'Testovací stránka',
+        'AUTHOR': 'Test Testovič',
+        'I18N_UNTRANSLATED_PAGES': 'hide',
+        'I18N_UNTRANSLATED_ARTICLES': 'remove',
+        },
     }
 
 I18N_UNTRANSLATED_PAGES = 'remove'
+
 # Uncomment following line if you want document-relative URLs when developing
 #RELATIVE_URLS = True

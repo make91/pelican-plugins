@@ -3,13 +3,15 @@
 import os
 import locale
 import unittest
+import subprocess
 from tempfile import mkdtemp
 from shutil import rmtree
 
 from . import i18n_subsites as i18ns
+from pelican import Pelican
 from pelican.generators import ArticlesGenerator, PagesGenerator
 from pelican.tests.support import get_settings
-from pelican import Pelican
+from pelican.settings import read_settings
 
 
 class TestTemporaryLocale(unittest.TestCase):
@@ -139,6 +141,7 @@ class TestFullRun(unittest.TestCase):
             'CACHE_PATH': self.temp_cache,
             'PLUGINS': [i18ns],
             }
+        )
         pelican = Pelican(settings)
         pelican.run()
 
@@ -149,5 +152,3 @@ class TestFullRun(unittest.TestCase):
             stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
         assert not out, out
         assert not err, err
-
-        
