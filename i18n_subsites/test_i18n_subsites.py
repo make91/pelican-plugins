@@ -9,7 +9,6 @@ from shutil import rmtree
 
 from . import i18n_subsites as i18ns
 from pelican import Pelican
-from pelican.generators import ArticlesGenerator, PagesGenerator
 from pelican.tests.support import get_settings
 from pelican.settings import read_settings
 
@@ -29,22 +28,6 @@ class TestTemporaryLocale(unittest.TestCase):
         '''Test that the temporary locale is set'''
         with i18ns.temporary_locale('C'):
             self.assertEqual(locale.setlocale(locale.LC_ALL), 'C')
-
-
-class TestGeneratorInspector(unittest.TestCase):
-    '''Test the GeneratorInspector class'''
-
-    def setUp(self):
-        '''Prepare a generator and GeneratorInspector instance to test on'''
-        generator = ArticlesGenerator(context={}, settings=get_settings(),
-                                      path=None, theme='',
-                                      output_path=None)
-        self.inspector = i18n.GeneratorInspector(generator)
-
-    def tearDown(self):
-        '''Delete the generator'''
-        del self.inspector
-
 
 
 class TestSettingsManipulation(unittest.TestCase):
@@ -97,7 +80,8 @@ class TestRegistration(unittest.TestCase):
         '''Test return on missing required signal'''
         i18ns._SIGNAL_HANDLERS_DB['tmp_sig'] = None
         i18ns.register()
-        self.assertNotIn(id(i18ns.save_generator), i18ns.signals.generator_init.receivers)
+        self.assertNotIn(id(i18ns.save_generator),
+                         i18ns.signals.generator_init.receivers)
 
     def test_registration(self):
         '''Test registration of all signal handlers'''
@@ -121,7 +105,7 @@ class TestFullRun(unittest.TestCase):
         '''Remove output and cache folders'''
         rmtree(self.temp_path)
         rmtree(self.temp_cache)
-        
+
     def test_sites_generation(self):
         '''Test generation of sites with the plugin
 
@@ -150,5 +134,5 @@ class TestFullRun(unittest.TestCase):
             ['git', 'diff', '--no-ext-diff', '--exit-code', '-w', output_path,
              self.temp_path], env={'PAGER': ''},
             stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
-        assert not out, out
-        assert not err, err
+        self.assertFalse(out, 'non-empty `diff` stdout')
+        self.assertFalse(err, 'non-empty `diff` stderr')
