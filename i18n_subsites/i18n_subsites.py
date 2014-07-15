@@ -157,6 +157,12 @@ def article2draft(article):
     return draft
 
 
+def page2hidden_page(page):
+    '''Transform a Page to a hidden Page'''
+    page.status = 'hidden'
+    return page
+
+
 class GeneratorInspector(object):
     '''Inspector of generator instances'''
 
@@ -170,7 +176,7 @@ class GeneratorInspector(object):
         PagesGenerator: {
             'translations_lists': ['translations', 'hidden_translations'],
             'contents_lists': [('pages', 'hidden_pages')],
-            'hiding_func': 'hidden',
+            'hiding_func': page2hidden_page,
             'policy': 'I18N_UNTRANSLATED_PAGES',
         },
     }
@@ -202,14 +208,7 @@ class GeneratorInspector(object):
     def hiding_function(self):
         '''Function for transforming content to a hidden version'''
         hiding_func = self.info.get('hiding_func', lambda x: x)
-        if isinstance(hiding_func, six.string_types):
-            def hiding_func_(content):
-                '''Set the status of the content to {}'''.format(hiding_func)
-                content.status = hiding_func
-                return content
-            return hiding_func_
-        else:
-            return hiding_func
+        return hiding_func
 
     def untranslated_policy(self, default):
         '''Get the policy for untranslated content'''
