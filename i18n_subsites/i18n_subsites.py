@@ -60,7 +60,7 @@ def initialize_dbs(settings):
     global _MAIN_SETTINGS, _MAIN_SITEURL, _MAIN_LANG, _SUBSITE_QUEUE
     _MAIN_SETTINGS = settings
     _MAIN_LANG = settings['DEFAULT_LANG']
-    _MAIN_SITEURL = settings['SITEURL']   # TODO if '', what then?
+    _MAIN_SITEURL = settings['SITEURL']
     _SUBSITE_QUEUE = settings.get('I18N_SUBSITES', {}).copy()
     prepare_site_db_and_overrides()
     # clear databases in case of autoreload mode
@@ -76,7 +76,7 @@ def prepare_site_db_and_overrides():
     '''
     _SITE_DB.clear()
     _SITE_DB[_MAIN_LANG] = _MAIN_SITEURL
-    #TODO make sure it works for both relative and absolute
+    # make sure it works for both root-relative and absolute
     main_siteurl = '/' if _MAIN_SITEURL == '' else _MAIN_SITEURL
     for lang, overrides in _SUBSITE_QUEUE.items():
         if 'SITEURL' not in overrides:
@@ -131,7 +131,7 @@ def relpath_to_site(lang, target_lang):
     '''
     path = _SITES_RELPATH_DB.get((lang, target_lang), None)
     if path is None:
-        siteurl = _SITE_DB.get(lang, _MAIN_SITEURL)   # TODO saner default
+        siteurl = _SITE_DB.get(lang, _MAIN_SITEURL)
         target_siteurl = _SITE_DB.get(target_lang, _MAIN_SITEURL)
         path = posixpath.relpath(get_site_path(target_siteurl),
                                  get_site_path(siteurl))
@@ -254,7 +254,7 @@ def filter_contents_translations(generator):
                 contents.remove(content)
                 if untrans_policy == 'hide':
                     other_contents.append(hiding_func(content))
-                elif untrans_policy == 'remove':   # TODO name
+                elif untrans_policy == 'remove':
                     removed_contents.append(content)
 
 
@@ -337,7 +337,6 @@ def interlink_removed_content(generator):
 
 def interlink_static_files(generator):
     '''Add links to static files in the main site if necessary'''
-    # TODO not always needed - > how to know?
     if generator.settings['STATIC_PATHS'] != []:
         return                               # customized STATIC_PATHS
     filenames = generator.context['filenames'] # minimize attr lookup
@@ -352,7 +351,8 @@ def interlink_static_files(generator):
 def save_main_static_files(static_generator):
     '''Save the static files generated for the main site'''
     global _MAIN_STATIC_FILES
-    if static_generator.settings is _MAIN_SETTINGS:   # TODO will this work?
+    # test just for current lang as settings change in autoreload mode
+    if static_generator.settings['DEFAULT_LANG'] == _MAIN_LANG:
         _MAIN_STATIC_FILES = static_generator.staticfiles
 
 
@@ -365,7 +365,6 @@ def update_generators():
     for generator in _GENERATOR_DB.keys():
         install_templates_translations(generator)
         add_variables_to_context(generator)
-         # TODO too late, articles have their own context it seems
         interlink_static_files(generator)
         interlink_removed_content(generator)
         interlink_translated_content(generator)
