@@ -107,7 +107,7 @@ def subscribe_filter_to_signals(settings):
         sig.connect(filter_contents_translations)
 
 
-def initialized_handler(pelican_obj):
+def initialize_plugin(pelican_obj):
     '''Initialize plugin variables and Pelican settings'''
     if _MAIN_SETTINGS is None:
         initialize_dbs(pelican_obj.settings)
@@ -413,7 +413,7 @@ def create_next_subsite(pelican_obj):
 
 # map: signal name -> function name
 _SIGNAL_HANDLERS_DB = {
-    'initialized': initialized_handler,
+    'get_generators': initialize_plugin,
     'article_generator_pretaxonomy': filter_contents_translations,
     'page_generator_finalized': filter_contents_translations,
     'get_writer': create_next_subsite,
