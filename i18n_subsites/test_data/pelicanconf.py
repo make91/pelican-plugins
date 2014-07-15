@@ -11,8 +11,8 @@ TIMEZONE = 'Europe/Prague'
 DEFAULT_LANG = 'en'
 LOCALE = 'en_US.UTF-8'
 
-# Disable feed generation
-FEED_ALL_ATOM = None
+# Generate only one feed
+FEED_ALL_ATOM = 'feeds_all.atom.xml'
 CATEGORY_FEED_ATOM = None
 TRANSLATION_FEED_ATOM = None
 AUTHOR_FEED_ATOM = None
@@ -46,12 +46,7 @@ I18N_SUBSITES = {
     'cz': {
         'SITENAME': 'Testovací stránka',
         'AUTHOR': 'Test Testovič',
-        'I18N_UNTRANSLATED_PAGES': 'hide',
+        'I18N_UNTRANSLATED_PAGES': 'keep',
         'I18N_UNTRANSLATED_ARTICLES': 'remove',
         },
     }
-
-I18N_UNTRANSLATED_PAGES = 'remove'
-
-# Uncomment following line if you want document-relative URLs when developing
-#RELATIVE_URLS = True
