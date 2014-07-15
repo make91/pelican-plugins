@@ -106,11 +106,13 @@ def subscribe_filter_to_signals(settings):
     for sig in settings.get('I18N_FILTER_SIGNALS', []):
         sig.connect(filter_contents_translations)
 
+
 def initialized_handler(pelican_obj):
     '''Initialize plugin variables and Pelican settings'''
     if _MAIN_SETTINGS is None:
         initialize_dbs(pelican_obj.settings)
         subscribe_filter_to_signals(pelican_obj.settings)
+
 
 def get_site_path(url):
     '''Get the path component of an url, excludes siteurl
