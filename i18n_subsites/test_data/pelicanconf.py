@@ -46,7 +46,7 @@ I18N_SUBSITES = {
     'cz': {
         'SITENAME': 'Testovací stránka',
         'AUTHOR': 'Test Testovič',
-        'I18N_UNTRANSLATED_PAGES': 'keep',
-        'I18N_UNTRANSLATED_ARTICLES': 'remove',
+        'I18N_UNTRANSLATED_PAGES': 'remove',
+        'I18N_UNTRANSLATED_ARTICLES': 'keep',
         },
     }
