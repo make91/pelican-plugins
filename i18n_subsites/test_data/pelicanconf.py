@@ -6,7 +6,8 @@ AUTHOR = 'The Tester'
 SITENAME = 'Testing site'
 SITEURL = 'http://example.com/test'
 
-TIMEZONE = 'Europe/Prague'
+# to make the test suite portable
+TIMEZONE = 'UTC'
 
 DEFAULT_LANG = 'en'
 LOCALE = 'en_US.UTF-8'
