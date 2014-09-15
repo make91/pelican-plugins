@@ -113,6 +113,7 @@ class TestFullRun(unittest.TestCase):
         To generate output for comparison run the command
         ``pelican -o test_data/output -s test_data/pelicanconf.py \
         test_data/content``
+        Remember to remove the output/ folder before that.
         '''
         base_path = os.path.dirname(os.path.abspath(__file__))
         base_path = os.path.join(base_path, 'test_data')
@@ -134,5 +135,5 @@ class TestFullRun(unittest.TestCase):
             ['git', 'diff', '--no-ext-diff', '--exit-code', '-w', output_path,
              self.temp_path], env={'PAGER': ''},
             stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
-        self.assertFalse(out, 'non-empty `diff` stdout')
-        self.assertFalse(err, 'non-empty `diff` stderr')
+        self.assertFalse(out, 'non-empty `diff` stdout:\n{}'.format(out))
+        self.assertFalse(err, 'non-empty `diff` stderr:\n{}'.format(out))
