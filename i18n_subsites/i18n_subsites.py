@@ -11,6 +11,7 @@ import posixpath
 
 from copy import copy
 from itertools import chain
+from operator import attrgetter
 from collections import OrderedDict
 from contextlib import contextmanager
 from six.moves.urllib.parse import urlparse
@@ -308,6 +309,8 @@ def interlink_translations(content):
     will be honored
     '''
     lang = content.lang
+    # sort translations by lang
+    content.translations.sort(key=attrgetter('lang'))
     for translation in content.translations:
         relpath = relpath_to_site(lang, translation.lang)
         url = _NATIVE_CONTENT_URL_DB[translation.source_path]
